@@ -1,0 +1,16 @@
+[book]
+authors = ["Martin Fraga"]
+language = "en"
+multilingual = false
+src = "src"
+title = "Apunte Final Teoria de las Comunicaciones 2024"
+
+[output.html]
+additional-css = ["./custom.css", "./mdbook-admonish.css"]
+mathjax-support = true
+
+[preprocessor]
+
+[preprocessor.admonish]
+command = "mdbook-admonish"
+assets_version = "3.0.2" # do not edit: managed by `mdbook-admonish install`
