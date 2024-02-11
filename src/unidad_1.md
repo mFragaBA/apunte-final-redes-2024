@@ -240,6 +240,11 @@ $$
 
 y \\(h_{max} = 1\\)
 
+### Codificación de Huffmann
+
+Es un método que permite construir codificadores óptimos en base a la
+frecuencia en la que aparecen los símbolos (de la fuente).
+
 ## Medios de Transmisión Reales
 
 Cualquier canal de comunicación:
@@ -283,3 +288,14 @@ C = 2B(\text{Hz})log_2(M)
 $$
 
 Sin embargo hay una restricción, \\(M\\) tiene que ser más chico que \\(\sqrt(1 + \text{SNR})\\)
+
+```admonish warning title="Pregunta de final alert"
+**Qué es el delay?**
+
+Está formado por:
+
+- el tiempo de propagación
+- el tiempo de transmisión
+- el tiempo de encolamiento
+- el tiempo de procesamiento
+```
