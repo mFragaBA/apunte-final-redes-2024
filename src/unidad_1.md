@@ -298,4 +298,9 @@ Está formado por:
 - el tiempo de transmisión
 - el tiempo de encolamiento
 - el tiempo de procesamiento
+
+Notar que sólo el tiempo de propagación ya te puede estar limitando porque
+transmitimos casi a la velocidad de la luz y sin embargo para mandar 1 bit por
+10000km por fibra tengo un tiempo de propagación aproximado de 50ms (y por lo
+tanto 100ms de RTT).
 ```
