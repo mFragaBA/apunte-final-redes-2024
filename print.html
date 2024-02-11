@@ -225,11 +225,248 @@ diferencias radicaba en que OSI era un protocolo que se estaba gestando por un
 comité conformado por gente de la industria y cada uno quería tener su
 influencia sobre el protocolo. Esto resultó en problemas para ponerse de
 acuerdo y en un modelo que si bien era completo era mucho más difícil de
-implementar, más caro y complejo. </p>
+implementar, más caro y complejo.</p>
 <p>Mientras seguían discutiendo sobre el estándar de OSI, TCP/IP ya se estaba usando...</p>
 </div>
 </div>
 <h2 id="nivel-físico"><a class="header" href="#nivel-físico">Nivel Físico</a></h2>
+<h3 id="sistema-de-comunicaciones"><a class="header" href="#sistema-de-comunicaciones">Sistema de Comunicaciones</a></h3>
+<p>Modelo: tengo fuente de info -&gt; Emisor -&gt; ----- canal de comunicación ----- -&gt; Receptor -&gt; Destino</p>
+<ul>
+<li>Qué es información?</li>
+<li>Qué es un canal?
+<ul>
+<li>guiado (cable)</li>
+<li>no guiado (inalámbrico)</li>
+</ul>
+</li>
+<li><strong>Siempre</strong> me ingresa ruido (alto o bajo)</li>
+</ul>
+<div id="admonition-ejemplo" class="admonition admonish-info">
+<div class="admonition-title">
+<p>Ejemplo</p>
+<p><a class="admonition-anchor-link" href="unidad_1.html#admonition-ejemplo"></a></p>
+</div>
+<div>
+<p>Hablo en meet y tengo a mi gato maullando. Tengo que hablar más fuerte. Más
+fuerte = mejor? Bueno no, lo que importa es la relación entre cuánto grito y el
+ruido ambiente.</p>
+</div>
+</div>
+<ul>
+<li>Relación Señal / Ruido</li>
+<li>La señal tiende a atenuarse a mayor distancia. Si se achica la señal y el
+ruido es constante, entonces se achica la capacidad de transmisión también.</li>
+<li>Lo importante de señal:
+<ul>
+<li>Es una onda electromagnética</li>
+<li>Se propaga a la velocidad de la luz (a un ~70% de la velocidad de la luz en el vacío)</li>
+<li><em>Demora</em>, no es instantáneo (es un límite físico, no lo puedo evitar)
+<ul>
+<li><strong>Tiempo de propagación</strong></li>
+<li>RTT (Round Trip Time) entre USA y ARG = 100ms</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Frecuencia \(f\) = Cantidad de ciclos que entran en un segundo</p>
+<p>Longitud de onda \(\lambda\) = \(c\) (velocidad de la luz) \(/ f\)</p>
+<ul>
+<li>a mayor frecuencia menor longitud de onda (\(c\) es constante)</li>
+</ul>
+<p>Glosario:</p>
+<ul>
+<li>Amplitud</li>
+<li>Frecuencia Angular (= \(2 \pi f\))</li>
+<li>Frecuencia Temporal (\(f\))</li>
+<li>Período = \(\frac{1}{f}\)</li>
+<li>Fase (desplazamiento)</li>
+</ul>
+<h3 id="dominio-transformado"><a class="header" href="#dominio-transformado">Dominio Transformado</a></h3>
+<p>Lo anterior era orientado al dominio del tiempo. Idea: paso ese dominio a otro para procesarlo mejor:</p>
+<ul>
+<li>serie trigonométrica de fourier -&gt; puedo representar ordas cuadradas como una serie infinita de senos y cosenos
+<ul>
+<li>permite descomponer la señal en las distintas frecuencias</li>
+</ul>
+</li>
+<li>transformada de fourier
+<ul>
+<li>lo anterior en la teoría. Esto en la práctica</li>
+<li>esto es lo que en la práctica permite descomponer una señal en sus distintas armónicas / componentes de frecuencia</li>
+</ul>
+</li>
+</ul>
+<h3 id="ancho-de-banda"><a class="header" href="#ancho-de-banda">Ancho de banda</a></h3>
+<p>Rango de frecuencias senoidales que pueden pasar por el medio sin ser atenuadas (&lt; 3db, esto es una generalización).</p>
+<div id="admonition-pregunta-de-final" class="admonition admonish-warning">
+<div class="admonition-title">
+<p>Pregunta de Final</p>
+<p><a class="admonition-anchor-link" href="unidad_1.html#admonition-pregunta-de-final"></a></p>
+</div>
+<div>
+<p>Tengo ancho de banda de 0 a 4 khz. Meto onda cuadrada periódica de 3khz en un canal con ancho de banda de 0 a 4khz. Qué obtengo a la salida?</p>
+<p>Rta: Obtengo una onda senoidal de 3khz, porque la primera armónica tiene el
+triple de frecuencia que la fundamental (en este caso es de 3 y la armónica ya
+tiene 9), o sea que salvo la fundamental te filtra todo.</p>
+</div>
+</div>
+<h3 id="teoría-de-la-información"><a class="header" href="#teoría-de-la-información">Teoría de la información</a></h3>
+<p>(En el 48') Llega Shannon con su paper "A Mathematical Theory of
+Communication". Ídolo, Genio, Maestro, Crack.</p>
+<p>Idea fundamental:</p>
+<ul>
+<li>No interesa el significado del mensaje (No me importa si es teléfono, tele, internet, etc.)</li>
+<li><strong>Teoría Clásica de la información</strong></li>
+<li>Propone 2 teoremas fundamentales:
+<ul>
+<li>Codificación para una fuente sin ruido</li>
+<li>Codificación para un canal con ruido</li>
+</ul>
+</li>
+<li>Sorprendentemente nunca habla de cómo implementar nada</li>
+</ul>
+<p>Definición: qué es la información</p>
+<p>$$
+I(E) = log(\frac{1}{P(E)})
+$$</p>
+<p>La información que me da un evento es el logaritmo de la inversa de la
+probabilidad de que ese evento suceda.</p>
+<p><strong>Unidades</strong>:</p>
+<ul>
+<li>log en base 2? <em>1 bit</em> (por qué? Si tengo un dígito binario equiprobable \(I(\)sale 0/1\() = 1\)</li>
+<li>(hay otros)</li>
+</ul>
+<h3 id="fuente-de-memoria-nula"><a class="header" href="#fuente-de-memoria-nula">Fuente de Memoria Nula</a></h3>
+<p>Es el modelo que tomamos asumiendo que cada símbolo que emite es estadísticamente independiente del siguiente</p>
+<div id="admonition-info" class="admonition admonish-info">
+<div class="admonition-title">
+<p>Info</p>
+<p><a class="admonition-anchor-link" href="unidad_1.html#admonition-info"></a></p>
+</div>
+<div>
+<p>Con una fuente de memoria nula, \(E(s_i) = log(\frac{1}{P(s_i)})\) bits</p>
+</div>
+</div>
+<h3 id="entropía"><a class="header" href="#entropía">Entropía</a></h3>
+<p>Viene a representar algo así como la cantidad media de info por símbolo de la fuente (similar a Esperanza).</p>
+<p>$$
+\sum_S P(s_i)I(s_i) \text{  bits}
+$$</p>
+<p>Es algo como la cantidad de info que voy a obtener cuando observo un símbolo / evento.</p>
+<p>Cuándo maximizo la info que me van a dar los eventos? Cuando los eventos son equiprobables.</p>
+<div id="admonition-offtopic-recomendación" class="admonition admonish-info">
+<div class="admonition-title">
+<p>offtopic recomendación</p>
+<p><a class="admonition-anchor-link" href="unidad_1.html#admonition-offtopic-recomendación"></a></p>
+</div>
+<div>
+<p>3b1b tiene un video en el que habla de entropía y lo aplica al wordle</p>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/v68zYyaEmEA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+</div>
+<h3 id="extensión-de-la-fuente-de-memoria-nula"><a class="header" href="#extensión-de-la-fuente-de-memoria-nula">Extensión de la Fuente de Memoria Nula</a></h3>
+<p>En vez de considerar de a un bit, agrupo varios bits juntos</p>
+<h3 id="codificación"><a class="header" href="#codificación">Codificación</a></h3>
+<p>Codificación sería el proceso por el cual mappeamos los símbolos de la fuente a
+símbolos de un alfabeto asociado. Por qué hacemos esto? En primer lugar porque
+a veces no tenemos una representación sencilla con la que trabajar. Y segundo
+porque dependiendo el tipo de codificación que usemos vamos a obtener una mejor
+o peor eficiencia.</p>
+<ul>
+<li>Le decimos <strong>código bloque</strong> a una codificación que asigna cada símbolo de la
+fuente a una secuencia de símbolos del alfabeto destino.</li>
+<li>Si la codificación es una función <strong>inyectiva</strong>, decimos que la codificación
+es <strong>no singular</strong></li>
+<li>Y decimos que una codificación es <strong>unívocamente decodificable</strong> si ninguna
+tira de símbolos del código (o sea los códigos generados) admite más de una
+única decodificación.</li>
+<li>Por último, decímos que un código es <strong>instantáneo</strong> si es posible
+decodificar sin ver los símbolos que suceden (no tiene que hacer look ahead)</li>
+</ul>
+<div id="admonition-condicion-de-los-prefijos" class="admonition admonish-info">
+<div class="admonition-title">
+<p>condicion de los prefijos</p>
+<p><a class="admonition-anchor-link" href="unidad_1.html#admonition-condicion-de-los-prefijos"></a></p>
+</div>
+<div>
+<p>Una condición <strong>necesaria y suficiente</strong> para que un código sea
+<strong>instantáneo</strong>, es que no haya palabra en el alfabeto que sea prefijo de la
+misma. Ojo, dos palabras pueden tener un mismo prefijo común siempre que el
+mismo no pertenezca al alfabeto.</p>
+<p>Teorema: Instantáneo =&gt; unívocamente decodificable</p>
+</div>
+</div>
+<ul>
+<li>En ascii tenemos 8 digitos binarios por símbolo</li>
+<li>Sin embargo, en morse tenemos una cantidad variable</li>
+</ul>
+<p>Pensemos ahora que lo que mandamos son mensajes, y para representar cada
+mensaje (\(m_i\)) lo representamos con una palabra de longitud \(L_i\). Y
+nuestro símbolo se codifica con cadenas de un alfabeto de \(r\) símbolos.</p>
+<p>Para esto último se define la <strong>longitud media de un código</strong>. Es la
+probabilidad de ocurrencia de cada símbolo por su longitud. Sería como la
+esperanza de la longitud de recibir un símbolo, o algo así.</p>
+<p>$$
+L = \sum{p_i L_i}
+$$</p>
+<p>Cómo lo minimizo? Al que más probabilidad tenga, le doy el código más chico.</p>
+<p>Otra cosa más, es que para asegurar que no haya pérdida de información requiero
+que:</p>
+<p>$$
+L log(r) \geq H(S)
+$$</p>
+<p>Donde \(log(r)\) es la cantidad promedio máxima de info de un símbolo del código (por lo que vimos antes).</p>
+<p>Definimos con esa desigualdad la <strong>eficiencia de un código</strong> \(h\) como:</p>
+<p>$$
+h = \frac{H(s)}{L log(r)}
+$$</p>
+<p>y \(h_{max} = 1\)</p>
+<h2 id="medios-de-transmisión-reales"><a class="header" href="#medios-de-transmisión-reales">Medios de Transmisión Reales</a></h2>
+<p>Cualquier canal de comunicación:</p>
+<ul>
+<li>Está expuesto a ruido</li>
+<li>Tiene problemas de potencia</li>
+<li>Tienen problemas de ancho de banda</li>
+</ul>
+<h3 id="fórmula-de-capacidad-de-shannon-para-un-canal-sujeto-a-ruido"><a class="header" href="#fórmula-de-capacidad-de-shannon-para-un-canal-sujeto-a-ruido">Fórmula de capacidad de Shannon para un canal sujeto a ruido</a></h3>
+<p>$$
+C_max(bps) = B(\text{hz}) log_2(1 + \text{SNR})
+$$</p>
+<div id="admonition-snr-para-capacidad-de-shannon" class="admonition admonish-info">
+<div class="admonition-title">
+<p>SNR para capacidad de Shannon</p>
+<p><a class="admonition-anchor-link" href="unidad_1.html#admonition-snr-para-capacidad-de-shannon"></a></p>
+</div>
+<div>
+<p>La relación señal-ruido de la capacidad de Shannon se expresa como logaritmos:</p>
+<p>$$
+SNR_{db} = 10 log_{10}(\text{SNR}) = 10 log_{10}(\frac{\text{PotenciaSeñal}}{\text{PotenciaRuido}})
+$$</p>
+<p>Por qué la escala logarítmica?</p>
+<p>Es para ajustarse a las magnitudes. La atenuación es logarítmica, el oido tiene
+respuesta logarítmica, etc. Y la escala logarítmica resulta más práctico (sobre
+todo para visualizar)</p>
+</div>
+</div>
+<h3 id="intro-a-nyquist"><a class="header" href="#intro-a-nyquist">Intro a Nyquist</a></h3>
+<p>El ñato este tiró una fórmula para la capacidad máxima en canales <strong>sin ruido</strong>:</p>
+<ul>
+<li>
+<p>2 niveles:
+$$
+C = 2B(\text{Hz})
+$$</p>
+</li>
+<li>
+<p>\(M\) niveles:
+$$
+C = 2B(\text{Hz})log_2(M)
+$$</p>
+</li>
+</ul>
+<p>Sin embargo hay una restricción, \(M\) tiene que ser más chico que \(\sqrt(1 + \text{SNR})\)</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="unidad-2---nivel-de-enlace"><a class="header" href="#unidad-2---nivel-de-enlace">Unidad 2 - Nivel de Enlace</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="unidad-3---medios-compartidos"><a class="header" href="#unidad-3---medios-compartidos">Unidad 3 - Medios Compartidos</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="unidad-4---nivel-de-red"><a class="header" href="#unidad-4---nivel-de-red">Unidad 4 - Nivel de Red</a></h1>
