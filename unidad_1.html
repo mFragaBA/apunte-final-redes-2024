@@ -3,7 +3,7 @@
     <head>
         <!-- Book generated using mdBook -->
         <meta charset="UTF-8">
-        <title>Unidad 1 - Introducción, conceptos básicos y nivel físico - Apunte Final Teoria de las Comunicaciones 2024</title>
+        <title>Unidad 1 - Nivel físico - Apunte Final Teoria de las Comunicaciones 2024</title>
 
 
         <!-- Custom HTML head -->
@@ -92,7 +92,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="unidad_1.html" class="active"><strong aria-hidden="true">1.</strong> Unidad 1 - Introducción, conceptos básicos y nivel físico</a></li><li class="chapter-item expanded "><a href="unidad_2.html"><strong aria-hidden="true">2.</strong> Unidad 2 - Nivel de Enlace</a></li><li class="chapter-item expanded "><a href="unidad_3.html"><strong aria-hidden="true">3.</strong> Unidad 3 - Medios Compartidos</a></li><li class="chapter-item expanded "><a href="unidad_4.html"><strong aria-hidden="true">4.</strong> Unidad 4 - Nivel de Red</a></li><li class="chapter-item expanded "><a href="unidad_5.html"><strong aria-hidden="true">5.</strong> Unidad 5 - Ruteo</a></li><li class="chapter-item expanded "><a href="unidad_6.html"><strong aria-hidden="true">6.</strong> Unidad 6 - Nivel de Transporte</a></li><li class="chapter-item expanded "><a href="unidad_7.html"><strong aria-hidden="true">7.</strong> Unidad 7 - El problema de Congestión</a></li><li class="chapter-item expanded "><a href="unidad_8.html"><strong aria-hidden="true">8.</strong> Unidad 8 - Nivel de Aplicación</a></li><li class="chapter-item expanded "><a href="unidad_9.html"><strong aria-hidden="true">9.</strong> Unidad 9 - Seguridad</a></li><li class="chapter-item expanded "><a href="bibliografia.html"><strong aria-hidden="true">10.</strong> Bibliografía</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="unidad_0.html"><strong aria-hidden="true">1.</strong> Unidad 0 - Introducción, conceptos básicos</a></li><li class="chapter-item expanded "><a href="unidad_1.html" class="active"><strong aria-hidden="true">2.</strong> Unidad 1 - Nivel físico</a></li><li class="chapter-item expanded "><a href="unidad_2.html"><strong aria-hidden="true">3.</strong> Unidad 2 - Nivel de Enlace</a></li><li class="chapter-item expanded "><a href="unidad_3.html"><strong aria-hidden="true">4.</strong> Unidad 3 - Medios Compartidos</a></li><li class="chapter-item expanded "><a href="unidad_4.html"><strong aria-hidden="true">5.</strong> Unidad 4 - Nivel de Red</a></li><li class="chapter-item expanded "><a href="unidad_5.html"><strong aria-hidden="true">6.</strong> Unidad 5 - Ruteo</a></li><li class="chapter-item expanded "><a href="unidad_6.html"><strong aria-hidden="true">7.</strong> Unidad 6 - Nivel de Transporte</a></li><li class="chapter-item expanded "><a href="unidad_7.html"><strong aria-hidden="true">8.</strong> Unidad 7 - El problema de Congestión</a></li><li class="chapter-item expanded "><a href="unidad_8.html"><strong aria-hidden="true">9.</strong> Unidad 8 - Nivel de Aplicación</a></li><li class="chapter-item expanded "><a href="unidad_9.html"><strong aria-hidden="true">10.</strong> Unidad 9 - Seguridad</a></li><li class="chapter-item expanded "><a href="bibliografia.html"><strong aria-hidden="true">11.</strong> Bibliografía</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -177,316 +177,209 @@
 
                 <div id="content" class="content">
                     <main>
-                        <h1 id="unidad-1---introducción-conceptos-básicos-y-capa-física"><a class="header" href="#unidad-1---introducción-conceptos-básicos-y-capa-física">Unidad 1 - Introducción, conceptos básicos y capa física</a></h1>
-<p>El primer invento similar a lo que conocemos hoy en día como redes de
-comunicación fue la del telégrafo. Luego, le siguió la del teléfono, y ambos
-tenían una cualidad que persistió hasta aproximadamente la década del 70: la
-<strong>conmutación de circuitos</strong>.</p>
-<p>La conmutación de circuitos como indica el nombre implicaba que haya operarios
-encargados de conectar a las dos personas / aparatos que querían iniciar una
-comunicación (cof cof, <em>operadora, comuníqueme con pirulito</em>)</p>
-<p>Este approach tiene varias desventajas, por lo que mayoritariamente entre los
-años 1959-1969 se desarrollaron las ideas que nos llevaron a la <strong>conmutación
-de paquetes</strong>, cuyo objetivo principal era resultar en una red más tolerante a
-fallas. Cómo se logró esto?</p>
-<ul>
-<li>Redundancia: que haya múltiples caminos entre dos puntos de la red</li>
-<li>Descentralizada: toleracia a censura</li>
-<li>División en fragmentos de los mensajes cosa de que puedan tomar caminos
-diferentes.</li>
-</ul>
-<p><em>ARPANET</em> (Advanced Research Projects Agency Network) fue uno de los más importantes.</p>
-<h2 id="estandarización"><a class="header" href="#estandarización">Estandarización</a></h2>
-<p>Las tecnologías de redes con conmutación de paquetes se suiguieron
-desarrollando, terminando a mediados de los 80 con una situación en la que
-tenías muchas redes distintas cada una con su implementación particular y sus
-propios detalles. Se empieza a hablar de la idea de tener una red única (en
-mayo de 1983 ISO publica “ISO 7498:The Basic Reference Model for Open Systems
-Interconnection” como un estándar internacional)</p>
-<p><img src="./img/osi_model.png" alt="Diagrama Modelo OSI" /></p>
-<p>El modelo OSI describe tódo lo que sucede con la información en una
-comunicación entre dos puntos. Parte el proceso en 7 capas, en la que cada una
-tiene un fin particular y cuyas entidades relevantes son definidas por eso. Por
-ejemplo, en la capa de aplicación tu entidad puede ser un archivo mientras que
-en la capa de de red tu entidad puede ser el paquete.</p>
-<p>Si bien se usa el modelo OSI para estudiar teoría de comunicaciones, hoy en día
-el verdadero ganador fue el modelo de TCP/IP, en donde hay 4 capas en lugar de
-las 7 que propone OSI</p>
-<p><img src="./osi_tcp_differences.png" alt="Diferencias OSI vs TCP/IP" /></p>
-<div id="admonition-osi-the-internet-that-wasnthttpsspectrumieeeorgosi-the-internet-that-wasnt" class="admonition admonish-info">
-<div class="admonition-title">
-<p><a href="https://spectrum.ieee.org/osi-the-internet-that-wasnt">osi the internet that wasnt</a></p>
-<p><a class="admonition-anchor-link" href="#admonition-osi-the-internet-that-wasnthttpsspectrumieeeorgosi-the-internet-that-wasnt"></a></p>
-</div>
-<div>
-<p>TLDR: OSI y TCP/IP compitieron durante un tiempo, pero una de las mayores
-diferencias radicaba en que OSI era un protocolo que se estaba gestando por un
-comité conformado por gente de la industria y cada uno quería tener su
-influencia sobre el protocolo. Esto resultó en problemas para ponerse de
-acuerdo y en un modelo que si bien era completo era mucho más difícil de
-implementar, más caro y complejo.</p>
-<p>Mientras seguían discutiendo sobre el estándar de OSI, TCP/IP ya se estaba usando...</p>
-</div>
-</div>
-<h2 id="nivel-físico"><a class="header" href="#nivel-físico">Nivel Físico</a></h2>
-<h3 id="sistema-de-comunicaciones"><a class="header" href="#sistema-de-comunicaciones">Sistema de Comunicaciones</a></h3>
-<p>Modelo: tengo fuente de info -&gt; Emisor -&gt; ----- canal de comunicación ----- -&gt; Receptor -&gt; Destino</p>
-<ul>
-<li>Qué es información?</li>
-<li>Qué es un canal?
-<ul>
-<li>guiado (cable)</li>
-<li>no guiado (inalámbrico)</li>
-</ul>
-</li>
-<li><strong>Siempre</strong> me ingresa ruido (alto o bajo)</li>
-</ul>
-<div id="admonition-ejemplo" class="admonition admonish-info">
-<div class="admonition-title">
-<p>Ejemplo</p>
-<p><a class="admonition-anchor-link" href="#admonition-ejemplo"></a></p>
-</div>
-<div>
-<p>Hablo en meet y tengo a mi gato maullando. Tengo que hablar más fuerte. Más
-fuerte = mejor? Bueno no, lo que importa es la relación entre cuánto grito y el
-ruido ambiente.</p>
-</div>
-</div>
-<ul>
-<li>Relación Señal / Ruido</li>
-<li>La señal tiende a atenuarse a mayor distancia. Si se achica la señal y el
-ruido es constante, entonces se achica la capacidad de transmisión también.</li>
-<li>Lo importante de señal:
-<ul>
-<li>Es una onda electromagnética</li>
-<li>Se propaga a la velocidad de la luz (a un ~70% de la velocidad de la luz en el vacío)</li>
-<li><em>Demora</em>, no es instantáneo (es un límite físico, no lo puedo evitar)
-<ul>
-<li><strong>Tiempo de propagación</strong></li>
-<li>RTT (Round Trip Time) entre USA y ARG = 100ms</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<p>Frecuencia \(f\) = Cantidad de ciclos que entran en un segundo</p>
-<p>Longitud de onda \(\lambda\) = \(c\) (velocidad de la luz) \(/ f\)</p>
-<ul>
-<li>a mayor frecuencia menor longitud de onda (\(c\) es constante)</li>
-</ul>
-<p>Glosario:</p>
-<ul>
-<li>Amplitud</li>
-<li>Frecuencia Angular (= \(2 \pi f\))</li>
-<li>Frecuencia Temporal (\(f\))</li>
-<li>Período = \(\frac{1}{f}\)</li>
-<li>Fase (desplazamiento)</li>
-</ul>
-<h3 id="dominio-transformado"><a class="header" href="#dominio-transformado">Dominio Transformado</a></h3>
-<p>Lo anterior era orientado al dominio del tiempo. Idea: paso ese dominio a otro para procesarlo mejor:</p>
-<ul>
-<li>serie trigonométrica de fourier -&gt; puedo representar ordas cuadradas como una serie infinita de senos y cosenos
-<ul>
-<li>permite descomponer la señal en las distintas frecuencias</li>
-</ul>
-</li>
-<li>transformada de fourier
-<ul>
-<li>lo anterior en la teoría. Esto en la práctica</li>
-<li>esto es lo que en la práctica permite descomponer una señal en sus distintas armónicas / componentes de frecuencia</li>
-</ul>
-</li>
-</ul>
-<h3 id="ancho-de-banda"><a class="header" href="#ancho-de-banda">Ancho de banda</a></h3>
-<p>Rango de frecuencias senoidales que pueden pasar por el medio sin ser atenuadas (&lt; 3db, esto es una generalización).</p>
+                        <h1 id="unidad-1---nivel-físico"><a class="header" href="#unidad-1---nivel-físico">Unidad 1 - Nivel Físico</a></h1>
+<p>La fórmula de Shannon pone un límite en la tasa de transmisión, pero no en la
+probabilidad de error. En teoría se podría minimizar arbitrariamente la
+probabilidad de error usando una codificación lo suficientemente combleja y
+obviamente con \(R_b \leq C\). Al no cumplir esto último esa idea de
+minimizar la probabilidad de error arbitrariamente ya no es posible.</p>
+<p><img src="./img/shannon_limit_graph.png#center" alt="Gráfico de SNR en base a la relación de la capacidad y el ancho de banda" /></p>
+<p>Si graficamos la relación entre la SNR y la relación capacidad sobre ancho de
+banda obtenemos el gráfico de arriba, que de alguna forma nos da valores para
+lo que es posible y lo que no. En la práctica se busca asemejarse lo más
+posible a la función graficada, buscando aumentar la cantidad de bits/s.</p>
 <div id="admonition-pregunta-de-final" class="admonition admonish-warning">
 <div class="admonition-title">
-<p>Pregunta de Final</p>
+<p>pregunta de final</p>
 <p><a class="admonition-anchor-link" href="#admonition-pregunta-de-final"></a></p>
 </div>
 <div>
-<p>Tengo ancho de banda de 0 a 4 khz. Meto onda cuadrada periódica de 3khz en un canal con ancho de banda de 0 a 4khz. Qué obtengo a la salida?</p>
-<p>Rta: Obtengo una onda senoidal de 3khz, porque la primera armónica tiene el
-triple de frecuencia que la fundamental (en este caso es de 3 y la armónica ya
-tiene 9), o sea que salvo la fundamental te filtra todo.</p>
+<p>Tengo un canal de ancho de banda de 0 a 2 Mhz, cuál es la forma de la onda de
+salida si inyecto una señal de 1 Mhz. Sólamente obtengo la fundamental ya que a
+partir de la tercer armónica que no entra en el ancho de banda.</p>
 </div>
 </div>
-<h3 id="teoría-de-la-información"><a class="header" href="#teoría-de-la-información">Teoría de la información</a></h3>
-<p>(En el 48') Llega Shannon con su paper "A Mathematical Theory of
-Communication". Ídolo, Genio, Maestro, Crack.</p>
-<p>Idea fundamental:</p>
+<h2 id="medios-de-transmisión"><a class="header" href="#medios-de-transmisión">Medios de transmisión</a></h2>
+<p>Hoy en día tenemos internet compuesta por provedores que tiene tecnologías de acceso:</p>
 <ul>
-<li>No interesa el significado del mensaje (No me importa si es teléfono, tele, internet, etc.)</li>
-<li><strong>Teoría Clásica de la información</strong></li>
-<li>Propone 2 teoremas fundamentales:
+<li>Fibra</li>
+<li>Cable</li>
+<li>Satélite</li>
+<li>Wifi</li>
+<li>Celular</li>
+</ul>
+<p><img src="./img/internet_diagram.png#center" alt="Gráfico de organización de Internet" /></p>
+<p>Las ondas electromagnéticas "necesitan" (en realidad no necesitan nada, se
+pueden propagar por el vacío) un <strong>medio de transmisión</strong> por el cuál
+transmitirse. Pueden ser:</p>
 <ul>
-<li>Codificación para una fuente sin ruido</li>
-<li>Codificación para un canal con ruido</li>
+<li>Guiados: Cable
+<ul>
+<li>de cobre</li>
+<li>coaxil</li>
+<li>fibra óptica</li>
 </ul>
 </li>
-<li>Sorprendentemente nunca habla de cómo implementar nada</li>
-</ul>
-<p>Definición: qué es la información</p>
-<p>$$
-I(E) = log(\frac{1}{P(E)})
-$$</p>
-<p>La información que me da un evento es el logaritmo de la inversa de la
-probabilidad de que ese evento suceda.</p>
-<p><strong>Unidades</strong>:</p>
+<li>No guiados: El espacio, libre
 <ul>
-<li>log en base 2? <em>1 bit</em> (por qué? Si tengo un dígito binario equiprobable \(I(\)sale 0/1\() = 1\)</li>
-<li>(hay otros)</li>
+<li>por radio</li>
+<li>microondas</li>
+<li>ondas infrarojas</li>
+<li>laser</li>
+<li>satélite</li>
+<li>luz</li>
 </ul>
-<h3 id="fuente-de-memoria-nula"><a class="header" href="#fuente-de-memoria-nula">Fuente de Memoria Nula</a></h3>
-<p>Es el modelo que tomamos asumiendo que cada símbolo que emite es estadísticamente independiente del siguiente</p>
-<div id="admonition-info" class="admonition admonish-info">
+</li>
+</ul>
+<h2 id="red-telefónica"><a class="header" href="#red-telefónica">Red telefónica</a></h2>
+<p>Vamos a tomar de ejemplo a la red telefónica ya que muchos de los conceptos se
+replican en otros medios de tecnologías.</p>
+<ul>
+<li>mediante conmutación de circuitos</li>
+</ul>
+<h3 id="multiplexación"><a class="header" href="#multiplexación">Multiplexación</a></h3>
+<p>Multiplexar consiste en poder tener varias comunicaciones simultáneas en un
+mismo troncal físico.</p>
+<p>Podemos multiplexar:</p>
+<ul>
+<li>por tiempo: una suerte de round robin</li>
+<li>por división frecuencia: transmito a través de las distintas bandas
+<ul>
+<li>el circuito para esto suele ser más complejo</li>
+<li>al tener menos ancho de banda es "más lento", pero tengo más uptime</li>
+</ul>
+</li>
+<li>por división de onda: lo mismo que antes pero aplicado a sistemas ópticos</li>
+</ul>
+<p><img src="./img/multiplexation_time_vs_freq.png#center" alt="Multiplexación por Frecuencia vs Tiempo" /></p>
+<h2 id="taxonomía-de-redes"><a class="header" href="#taxonomía-de-redes">Taxonomía de Redes</a></h2>
+<p>Las Redes de comunicaciones se pueden dividir en:</p>
+<ul>
+<li>Redes de conmutación de Circuitos</li>
+<li>Redes de conmutación de Paquetes
+<ul>
+<li>Redes con Circuitos Virtuales</li>
+<li>Redes de Datagramas (en el 99.999% de la materia vemos esto)
+<ul>
+<li>servicio sin conexión</li>
+<li>el nivel de transporte brinda soporte para dar servicio orientado a conexión también (ej: TCP)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Las redes de conmutación de paquetes se basan en el concepto de
+<strong>multiplexación estadística</strong>. Mi conmutador tiene un buffer y despacha de a
+poco en base a algún criterio en base a la dirección origen y destino de dichos
+paquetes.</p>
+<p>Esta idea también implica que cada paquete compite con otros por ser enviado y
+puede llevarnos a situaciones de congestión.</p>
+<h2 id="conversión-analógico-digital"><a class="header" href="#conversión-analógico-digital">Conversión Analógico Digital</a></h2>
+<p>Tengo 2 Etapas:</p>
+<ol>
+<li>Primero una etapa de muestreo
+<ul>
+<li>Gracias a Nyquist sabemos que debemos muestrear al doble del ancho de banda (por lo menos)</li>
+<li>Además, tengo que definir con cuántos dígitos binarios uso para representar cada muestra</li>
+</ul>
+</li>
+<li>Segundo cuantifico dichas muestras (o sea mando el valor a su representación binaria correspondiente)
+<ul>
+<li>Hoy en día a esa técnica la llamamos <em>PCM</em> (<strong>P</strong>ulse <strong>C</strong>ode <strong>M</strong>odulation)</li>
+</ul>
+</li>
+</ol>
+<h3 id="teorema-del-muestreo-nyquist"><a class="header" href="#teorema-del-muestreo-nyquist">Teorema del muestreo (Nyquist)</a></h3>
+<p>Si queremos Reconstruir una señal cuya frecuencia máxima es \(f_m\) debemos
+muestrar dicha señal a una razón de \(f_s &gt; 2 * f_m\) llamada <strong>frecuencia de
+muestreo</strong></p>
+<div id="admonition-ejemplo-con-red-de-computadoras" class="admonition admonish-info">
 <div class="admonition-title">
-<p>Info</p>
-<p><a class="admonition-anchor-link" href="#admonition-info"></a></p>
+<p>Ejemplo con red de computadoras</p>
+<p><a class="admonition-anchor-link" href="#admonition-ejemplo-con-red-de-computadoras"></a></p>
 </div>
 <div>
-<p>Con una fuente de memoria nula, \(E(s_i) = log(\frac{1}{P(s_i)})\) bits</p>
+<p><img src="./img/modem_and_codec.png#center" alt="" /></p>
+<p>Este es un diagrama (un poco antiguo). Las oficinas interurbanas operaban en
+digital, por lo que era necesario que la señal originalmente analógica sea
+convertida a una señal digital.</p>
+<p>Uno en casa entonces tenía un modem, que emitía una señal analógica y luego le
+seguía un codec que se encargaba de hacer la conversión analógico digital. Del
+otro lado de la red, estaba un codec que cumplía la función inversa y un modem
+por cliente.</p>
+<p>Si lo pensamos con el caso del teléfono, la mayoría de las comunicaciones por
+voz se pueden agrupar en el rando de 0-4Khz, por lo tanto se necesita una tasa
+de muestreo de 8Khz o 8000 muestras por segundo. Como en ese caso cada muestra
+se codificaba en 8 bits (En realidad son 7 bits para la data y 1 para
+sincronización), era necesario un ancho de banda (I know, está mal usar este
+término) de 64kbps.</p>
 </div>
 </div>
-<h3 id="entropía"><a class="header" href="#entropía">Entropía</a></h3>
-<p>Viene a representar algo así como la cantidad media de info por símbolo de la fuente (similar a Esperanza).</p>
-<p>$$
-\sum_S P(s_i)I(s_i) \text{  bits}
-$$</p>
-<p>Es algo como la cantidad de info que voy a obtener cuando observo un símbolo / evento.</p>
-<p>Cuándo maximizo la info que me van a dar los eventos? Cuando los eventos son equiprobables.</p>
-<div id="admonition-offtopic-recomendación" class="admonition admonish-info">
-<div class="admonition-title">
-<p>offtopic recomendación</p>
-<p><a class="admonition-anchor-link" href="#admonition-offtopic-recomendación"></a></p>
-</div>
-<div>
-<p>3b1b tiene un video en el que habla de entropía y lo aplica al wordle</p>
-<iframe width="560" height="315" src="https://www.youtube.com/embed/v68zYyaEmEA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-</div>
-</div>
-<h3 id="extensión-de-la-fuente-de-memoria-nula"><a class="header" href="#extensión-de-la-fuente-de-memoria-nula">Extensión de la Fuente de Memoria Nula</a></h3>
-<p>En vez de considerar de a un bit, agrupo varios bits juntos</p>
-<h3 id="codificación"><a class="header" href="#codificación">Codificación</a></h3>
-<p>Codificación sería el proceso por el cual mappeamos los símbolos de la fuente a
-símbolos de un alfabeto asociado. Por qué hacemos esto? En primer lugar porque
-a veces no tenemos una representación sencilla con la que trabajar. Y segundo
-porque dependiendo el tipo de codificación que usemos vamos a obtener una mejor
-o peor eficiencia.</p>
+<h2 id="modulación"><a class="header" href="#modulación">Modulación</a></h2>
+<h3 id="frecuencia-modulada-vs-amplitud-modulada"><a class="header" href="#frecuencia-modulada-vs-amplitud-modulada">Frecuencia Modulada vs Amplitud Modulada</a></h3>
+<p><img src="./img/am_vs_fm.png" alt="" /></p>
+<p>Tengo la Señal Portadora y la Señal Modulante.</p>
 <ul>
-<li>Le decimos <strong>código bloque</strong> a una codificación que asigna cada símbolo de la
-fuente a una secuencia de símbolos del alfabeto destino.</li>
-<li>Si la codificación es una función <strong>inyectiva</strong>, decimos que la codificación
-es <strong>no singular</strong></li>
-<li>Y decimos que una codificación es <strong>unívocamente decodificable</strong> si ninguna
-tira de símbolos del código (o sea los códigos generados) admite más de una
-única decodificación.</li>
-<li>Por último, decímos que un código es <strong>instantáneo</strong> si es posible
-decodificar sin ver los símbolos que suceden (no tiene que hacer look ahead)</li>
+<li>Frecuencia Modulada es cuando la frecuencia de la portadora varía en base a la amplitud de la modulante.</li>
+<li>Amplitud Modulada es cuando la amplitud de la portadora varía en base a la amplitud de la modulante.</li>
 </ul>
-<div id="admonition-condicion-de-los-prefijos" class="admonition admonish-info">
-<div class="admonition-title">
-<p>condicion de los prefijos</p>
-<p><a class="admonition-anchor-link" href="#admonition-condicion-de-los-prefijos"></a></p>
-</div>
-<div>
-<p>Una condición <strong>necesaria y suficiente</strong> para que un código sea
-<strong>instantáneo</strong>, es que no haya palabra en el alfabeto que sea prefijo de la
-misma. Ojo, dos palabras pueden tener un mismo prefijo común siempre que el
-mismo no pertenezca al alfabeto.</p>
-<p>Teorema: Instantáneo =&gt; unívocamente decodificable</p>
-</div>
-</div>
+<h3 id="modem"><a class="header" href="#modem">Modem</a></h3>
+<p>Si volvemos al diagrama, la idea del modem era transformar la señal digital de
+la computadora en una señal analógica para poder mandarla por los cables de
+cobre (y posteriormente volver a ser convertida a digital por el codec 🤷).</p>
+<p>El truco de los modems entonces es meter la información sobre una señal portadora que pueda pasar por el ancho de banda disponible. Para esto hay 3 técnicas de modulación de una señal digital sobre una analógica:</p>
 <ul>
-<li>En ascii tenemos 8 digitos binarios por símbolo</li>
-<li>Sin embargo, en morse tenemos una cantidad variable</li>
+<li>Desplazamiento de amplitud (ASK)</li>
 </ul>
-<p>Pensemos ahora que lo que mandamos son mensajes, y para representar cada
-mensaje (\(m_i\)) lo representamos con una palabra de longitud \(L_i\). Y
-nuestro símbolo se codifica con cadenas de un alfabeto de \(r\) símbolos.</p>
-<p>Para esto último se define la <strong>longitud media de un código</strong>. Es la
-probabilidad de ocurrencia de cada símbolo por su longitud. Sería como la
-esperanza de la longitud de recibir un símbolo, o algo así.</p>
-<p>$$
-L = \sum{p_i L_i}
-$$</p>
-<p>Cómo lo minimizo? Al que más probabilidad tenga, le doy el código más chico.</p>
-<p>Otra cosa más, es que para asegurar que no haya pérdida de información requiero
-que:</p>
-<p>$$
-L log(r) \geq H(S)
-$$</p>
-<p>Donde \(log(r)\) es la cantidad promedio máxima de info de un símbolo del código (por lo que vimos antes).</p>
-<p>Definimos con esa desigualdad la <strong>eficiencia de un código</strong> \(h\) como:</p>
-<p>$$
-h = \frac{H(s)}{L log(r)}
-$$</p>
-<p>y \(h_{max} = 1\)</p>
-<h3 id="codificación-de-huffmann"><a class="header" href="#codificación-de-huffmann">Codificación de Huffmann</a></h3>
-<p>Es un método que permite construir codificadores óptimos en base a la
-frecuencia en la que aparecen los símbolos (de la fuente).</p>
-<h2 id="medios-de-transmisión-reales"><a class="header" href="#medios-de-transmisión-reales">Medios de Transmisión Reales</a></h2>
-<p>Cualquier canal de comunicación:</p>
+<p><img src="./img/ask.png#center" alt="" /></p>
 <ul>
-<li>Está expuesto a ruido</li>
-<li>Tiene problemas de potencia</li>
-<li>Tienen problemas de ancho de banda</li>
+<li>Desplazamiento de frecuencia (FSK)</li>
 </ul>
-<h3 id="fórmula-de-capacidad-de-shannon-para-un-canal-sujeto-a-ruido"><a class="header" href="#fórmula-de-capacidad-de-shannon-para-un-canal-sujeto-a-ruido">Fórmula de capacidad de Shannon para un canal sujeto a ruido</a></h3>
-<p>$$
-C_max(bps) = B(\text{hz}) log_2(1 + \text{SNR})
-$$</p>
-<div id="admonition-snr-para-capacidad-de-shannon" class="admonition admonish-info">
-<div class="admonition-title">
-<p>SNR para capacidad de Shannon</p>
-<p><a class="admonition-anchor-link" href="#admonition-snr-para-capacidad-de-shannon"></a></p>
-</div>
-<div>
-<p>La relación señal-ruido de la capacidad de Shannon se expresa como logaritmos:</p>
-<p>$$
-SNR_{db} = 10 log_{10}(\text{SNR}) = 10 log_{10}(\frac{\text{PotenciaSeñal}}{\text{PotenciaRuido}})
-$$</p>
-<p>Por qué la escala logarítmica?</p>
-<p>Es para ajustarse a las magnitudes. La atenuación es logarítmica, el oido tiene
-respuesta logarítmica, etc. Y la escala logarítmica resulta más práctico (sobre
-todo para visualizar)</p>
-</div>
-</div>
-<h3 id="intro-a-nyquist"><a class="header" href="#intro-a-nyquist">Intro a Nyquist</a></h3>
-<p>El ñato este tiró una fórmula para la capacidad máxima en canales <strong>sin ruido</strong>:</p>
+<p><img src="./img/fsk.png#center" alt="" /></p>
+<ul>
+<li>Desplazamiento de fase (PSK)</li>
+</ul>
+<p><img src="./img/psk.png#center" alt="" /></p>
 <ul>
 <li>
-<p>2 niveles:
-$$
-C = 2B(\text{Hz})
-$$</p>
+<p><strong>Velocidad de Modulación</strong> \(V_m\): es el número de cambios de señal por unidad de
+tiempo. Se mide en Baudios (símbolos / segundo).</p>
 </li>
 <li>
-<p>\(M\) niveles:
-$$
-C = 2B(\text{Hz})log_2(M)
-$$</p>
+<p><strong>Velocidad de Transmisión</strong>: \(V_m * N\), donde \(N\) es el número de
+bits por símbolo. Se mide en bits por segundo.</p>
 </li>
 </ul>
-<p>Sin embargo hay una restricción, \(M\) tiene que ser más chico que \(\sqrt(1 + \text{SNR})\)</p>
-<div id="admonition-pregunta-de-final-alert" class="admonition admonish-warning">
+<h3 id="lets-go-even-further"><a class="header" href="#lets-go-even-further">Let's go even further</a></h3>
+<blockquote>
+<p>Recomendación: si tienen dudas lean esta parte del Tanenbaum, en el Peterson no está.</p>
+</blockquote>
+<p>Vieron que dijimos que la velocidad de Modulación la medimos en símbolos por
+segundo, y no en base a la cantidad de bits. Bueno, tranquilamente podemos
+asumir que no tengo un único canal binario si no muchos (varios bits), y la
+combinación son los distintos símbolos a transferir.</p>
+<p>Luego, lo que puedo hacer es modular para 2 bits en base a 4 frecuencias o 4 fases (QPSK) por
+ejemplo. Esto es lo que se conoce como modulación multinivel.</p>
+<p>También puedo combinar amplitud y fase (QAM) o amplitud y frecuencia (no puedo ambos
+porque fase y frecuencia están relacionados). (hoy en día ya estamos llegando a 1024-QAM y 4096-QAM)</p>
+<p><img src="./img/qpsk_and_gam.png#center" alt="" /></p>
+<p>Y puedo agregar tantos niveles como quiera, pero fijate que a medida que agrego
+más puntos, hago más finita la cuadratura. Con lo cual es más vulnerable al
+ruido.</p>
+<p>El error generado se llama <em>MER</em>, y se expresa en db como:</p>
+<p>$$
+\text{MER} = 10 log \frac{\text{RMS error magnitude}}{\text{average symbol magnitude}}
+$$</p>
+<div id="admonition-dato-de-color-sobre-wi-fi" class="admonition admonish-info">
 <div class="admonition-title">
-<p>Pregunta de final alert</p>
-<p><a class="admonition-anchor-link" href="#admonition-pregunta-de-final-alert"></a></p>
+<p>Dato de color sobre Wi-Fi</p>
+<p><a class="admonition-anchor-link" href="#admonition-dato-de-color-sobre-wi-fi"></a></p>
 </div>
 <div>
-<p><strong>Qué es el delay?</strong></p>
-<p>Está formado por:</p>
-<ul>
-<li>el tiempo de propagación</li>
-<li>el tiempo de transmisión</li>
-<li>el tiempo de encolamiento</li>
-<li>el tiempo de procesamiento</li>
-</ul>
-<p>Notar que sólo el tiempo de propagación ya te puede estar limitando porque
-transmitimos casi a la velocidad de la luz y sin embargo para mandar 1 bit por
-10000km por fibra tengo un tiempo de propagación aproximado de 50ms (y por lo
-tanto 100ms de RTT).</p>
+<p>A medida que me alejo del router y pierdo señal, aumenta la <em>SNR</em> y por ende me
+cuesta más distinguir cada símbolo de QAM. Entonces lo que hace Wi-Fi es
+achicar la cantidad de símbolos y por ende baja de QAM-1024 (ponele) a QAM-256,
+y por ende baja su velocidad para evitar errores en la transmisión.</p>
 </div>
 </div>
 
@@ -494,6 +387,9 @@ tanto 100ms de RTT).</p>
 
                     <nav class="nav-wrapper" aria-label="Page navigation">
                         <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="unidad_0.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
 
                             <a rel="next prefetch" href="unidad_2.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                                 <i class="fa fa-angle-right"></i>
@@ -505,6 +401,9 @@ tanto 100ms de RTT).</p>
             </div>
 
             <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="unidad_0.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
 
                     <a rel="next prefetch" href="unidad_2.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
                         <i class="fa fa-angle-right"></i>

@@ -92,7 +92,7 @@
 
         <nav id="sidebar" class="sidebar" aria-label="Table of contents">
             <div class="sidebar-scrollbox">
-                <ol class="chapter"><li class="chapter-item expanded "><a href="unidad_1.html"><strong aria-hidden="true">1.</strong> Unidad 1 - Introducción, conceptos básicos y nivel físico</a></li><li class="chapter-item expanded "><a href="unidad_2.html" class="active"><strong aria-hidden="true">2.</strong> Unidad 2 - Nivel de Enlace</a></li><li class="chapter-item expanded "><a href="unidad_3.html"><strong aria-hidden="true">3.</strong> Unidad 3 - Medios Compartidos</a></li><li class="chapter-item expanded "><a href="unidad_4.html"><strong aria-hidden="true">4.</strong> Unidad 4 - Nivel de Red</a></li><li class="chapter-item expanded "><a href="unidad_5.html"><strong aria-hidden="true">5.</strong> Unidad 5 - Ruteo</a></li><li class="chapter-item expanded "><a href="unidad_6.html"><strong aria-hidden="true">6.</strong> Unidad 6 - Nivel de Transporte</a></li><li class="chapter-item expanded "><a href="unidad_7.html"><strong aria-hidden="true">7.</strong> Unidad 7 - El problema de Congestión</a></li><li class="chapter-item expanded "><a href="unidad_8.html"><strong aria-hidden="true">8.</strong> Unidad 8 - Nivel de Aplicación</a></li><li class="chapter-item expanded "><a href="unidad_9.html"><strong aria-hidden="true">9.</strong> Unidad 9 - Seguridad</a></li><li class="chapter-item expanded "><a href="bibliografia.html"><strong aria-hidden="true">10.</strong> Bibliografía</a></li></ol>
+                <ol class="chapter"><li class="chapter-item expanded "><a href="unidad_0.html"><strong aria-hidden="true">1.</strong> Unidad 0 - Introducción, conceptos básicos</a></li><li class="chapter-item expanded "><a href="unidad_1.html"><strong aria-hidden="true">2.</strong> Unidad 1 - Nivel físico</a></li><li class="chapter-item expanded "><a href="unidad_2.html" class="active"><strong aria-hidden="true">3.</strong> Unidad 2 - Nivel de Enlace</a></li><li class="chapter-item expanded "><a href="unidad_3.html"><strong aria-hidden="true">4.</strong> Unidad 3 - Medios Compartidos</a></li><li class="chapter-item expanded "><a href="unidad_4.html"><strong aria-hidden="true">5.</strong> Unidad 4 - Nivel de Red</a></li><li class="chapter-item expanded "><a href="unidad_5.html"><strong aria-hidden="true">6.</strong> Unidad 5 - Ruteo</a></li><li class="chapter-item expanded "><a href="unidad_6.html"><strong aria-hidden="true">7.</strong> Unidad 6 - Nivel de Transporte</a></li><li class="chapter-item expanded "><a href="unidad_7.html"><strong aria-hidden="true">8.</strong> Unidad 7 - El problema de Congestión</a></li><li class="chapter-item expanded "><a href="unidad_8.html"><strong aria-hidden="true">9.</strong> Unidad 8 - Nivel de Aplicación</a></li><li class="chapter-item expanded "><a href="unidad_9.html"><strong aria-hidden="true">10.</strong> Unidad 9 - Seguridad</a></li><li class="chapter-item expanded "><a href="bibliografia.html"><strong aria-hidden="true">11.</strong> Bibliografía</a></li></ol>
             </div>
             <div id="sidebar-resize-handle" class="sidebar-resize-handle">
                 <div class="sidebar-resize-indicator"></div>
@@ -178,6 +178,184 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="unidad-2---nivel-de-enlace"><a class="header" href="#unidad-2---nivel-de-enlace">Unidad 2 - Nivel de Enlace</a></h1>
+<p>Tanto OSI como TCP usan un modelo basado en <em>capas</em>. Cada Entidad separa su
+funcionalidad en varias capas. Cada capa agrega info de control, mediante el
+agregado de headers. De esta forma la capa agrega / interpreta los headers o
+frames enviados / recibidos y permite que haya una comunicación entre las capas
+adyacentes pero a su vez capa a capa entre los distintos hosts.</p>
+<p><img src="./img/control_info.png" alt="" /></p>
+<p>Además, el servicio que una capa le brinda a otra se puede clasificar en:</p>
+<ul>
+<li><strong>sin conexión y sin reconocimiento</strong> (ej: UDP)</li>
+<li><strong>sin conexión y con reconocimiento</strong> (ej: uso de ACK en capa 2 de OSI)</li>
+<li><strong>orientado a conexión</strong> (ej: websockets, TCP)</li>
+</ul>
+<p>El objetivo de los protocolos de comunicación (nivel de enlace en OSI), buscan en proveer:</p>
+<ul>
+<li>confiabilidad</li>
+<li>control de errores</li>
+<li>control de flujo</li>
+</ul>
+<p>Un ejemplo para garantizar control de errores sería agregar un CRC / checksum
+que el receptor valida. Si el receptor detecta que el mensaje es inválido,
+basta con que no mande un ACK (aknowledge) de que recibió el mensaje.</p>
+<h2 id="control-de-errores"><a class="header" href="#control-de-errores">Control de errores</a></h2>
+<p>Si consideramos que lo que mandamos son <em>codewords</em> de \(n\) bits, compuestos
+por \(m\) bits de datos y \(r\) bits de redundancia y siendo \(d\) la
+distancia mínima de Hamming entre 2 codewords posibles y \(e\) la cantidad de
+bits erroneos para un cierto mensjae, necesitamos que se cumpla que:</p>
+<ul>
+<li>\(e + 1 \leq d\) para poder detectar que hubo errores</li>
+<li>\(2*e + 1 \leq d\) para poder corregir errores</li>
+</ul>
+<blockquote>
+<p>Si quieren ver un algoritmo para detección y corrección de errores pueden
+chequear
+<a href="https://www.cs.cmu.edu/~guyb/realworld/reedsolomon/reed_solomon_codes.html">Reed-Solomon</a></p>
+</blockquote>
+<h2 id="confiabilidad"><a class="header" href="#confiabilidad">Confiabilidad</a></h2>
+<p>Para garantizar confiabilidad, va a ser necesario poder efectuar
+<em>retransmisiones</em>. Esto se puede dar de forma <strong>implícita</strong> cuando se produce
+un <strong>timeout</strong> (tiempo sin recibir un ACK de que se recibió el mensaje), o de
+forma <strong>explícita</strong> si nuestro protocolo admite mensajes de control.</p>
+<p>Cómo puedo hacer el ACK de cierto símbolo? Mediante números de secuencia. El
+ACK entonces representa que el frame con cierto número de secuencia fue
+recibido.</p>
+<h3 id="primer-approach-stop-and-wait"><a class="header" href="#primer-approach-stop-and-wait">Primer approach: Stop and Wait</a></h3>
+<ul>
+<li>Espero a recibir el ACK para mandar el nuevo frame.</li>
+<li>Dado que es "bloqueante", basta con tener un único bit para el número de secuencia.</li>
+</ul>
+<p>Qué pasa si ocurre lo siguiente:</p>
+<ol>
+<li>El emisor manda el primer frame</li>
+<li>Transcurre el tiempo suficiente para que ocurra un timeout (en el medio el
+Receptor recibe el frame pero no responde a tiempo)</li>
+<li>El emisor vuelve a mandar el primer frame</li>
+<li>El emisor recibe el ACK del primer frame</li>
+<li>El receptor recibe el primer frame y manda el ACK</li>
+<li>El emisor recibe por segunda vez el ACK del primer frame</li>
+</ol>
+<p>Ese fenómeno es lo que se conoce como el <strong>problema del solapamiento</strong> o el
+<strong>problema de las reencarnaciones</strong>, y los distintos approaches van a buscar
+problemas de lidiar con esto.</p>
+<h3 id="eficiencia-de-un-protocolo"><a class="header" href="#eficiencia-de-un-protocolo">Eficiencia de un protocolo</a></h3>
+<p>Queremos evaluar cuánto tiempo se está transmitiendo vs cuánto tiempo se está
+esperando por confirmaciones. Lo definimos como:</p>
+<p>$$
+\eta_{proto} = \frac{T_{tx}}{\text{RTT}(F)}
+$$</p>
+<blockquote>
+<p>Pregunta: Tiene sentido que \(\eta_{proto} &gt; 1\)?</p>
+</blockquote>
+<h3 id="segundo-approach-ventana-deslizante"><a class="header" href="#segundo-approach-ventana-deslizante">Segundo approach: Ventana deslizante</a></h3>
+<p>Para el caso de Stop and Wait, notar que transmito la mitad de lo que dura el
+RTT y después espero, entonces tengo una eficiencia del 0,5. Queremos hacerlo
+mejor.</p>
+<p>Idea: mando varios frames seguidos, sin esperar al ACK. Esto es el concepto de
+<strong>ventana de frames</strong>, y en ese caso el cálculo de la eficiencia cambia
+ligeramente:</p>
+<p>$$
+\eta_{proto} = \frac{T_{tx}(V)}{\text{RTT}(F)}
+$$</p>
+<p>Ahora el \(T_{tx}(V)\) es el tiempo que me tarda mandar todos los frames de
+la ventana, mientras que el \(\text{RTT}(F)\) es lo que tarda en volverme el
+ACK del primer frame que mandé.</p>
+<ul>
+<li>Requiero de más bits para el número de secuencia (tiene que permitirme
+identificar todos los frames de la trama por lo menos)</li>
+<li>A medida que recibo los ACk voy desplazando la ventana (ojo porque ahora hay
+que determinar cuándo desplazo la ventana. Siempre que recibo? O sólo si
+recibí el siguiente al último que tenía reconocido?)</li>
+</ul>
+<p>Para buscar la mejor eficiencia posible se define como tamaño de ventana (en
+frames) a:</p>
+<p>$$
+\text{SWS} = \frac{V_{tx} * RTT}{|Frame|}
+$$</p>
+<p>Y envío un frame nuevo siempre que \(\text{UltimoFrameEnviado} \leq \text{UltimoFrameReconocido} + \text{SWS}\)</p>
+<h3 id="acks-acumulativos-vs-selectivos"><a class="header" href="#acks-acumulativos-vs-selectivos">ACKs acumulativos vs selectivos</a></h3>
+<p>En la sección anterior faltó mencionar cuál es el comportamiento esperado del
+receptor ante algún error. El primer approach es el de ACKs acumulativos, en
+donde a partir de que se produce un error en la transmisión el receptor ignora
+todos los mensajes posteriores hasta que el frame con error se reenvía y recibe
+correctamente. (Esta idea de retransmitir todo se lo conoce también como
+<strong>GoBackN</strong>)</p>
+<p><img src="./img/sliding_window_gobackn.png#center" alt="" /></p>
+<p>Ahora, también podría pedir que el receptor tenga un buffer que permita guardar
+los frames que va recibiendo, y en ese caso basta con que el receptor mande una
+señal pidiendo el frame específico.</p>
+<p><img src="./img/sliding_window_sack.png#center" alt="" /></p>
+<p>Para ambos casos definimos la ventana de recepción \(\text{RWS}\) como:</p>
+<p>$$
+\text{RWS} =
+\begin{cases}
+\text{SWS},  &amp; \text{si hay SACK} \\
+1, &amp; \text{en caso contrario}
+\end{cases}
+$$</p>
+<p>Además, como se puede dar acá también el problema de las reencarnaciones, es
+necesario poder distinguir por lo menos \(SWS + RWS\) frames distintos.</p>
+<h3 id="sobre-la-eficiencia-de-la-ventana"><a class="header" href="#sobre-la-eficiencia-de-la-ventana">Sobre la eficiencia de la ventana</a></h3>
+<p>Primero necesito que definamos algunos conceptos:</p>
+<ul>
+<li>El <strong>tiempo de transmisión</strong> \(T_{tx} = \frac{|datos|}{V_{tx}}\) es el
+tiempo para enviar todos los bits de un frame a través del medio de
+transmisión.
+<ul>
+<li>Ocupa una porción significativa de tiempo en conexiones lentas o donde el
+frame es muy grande.</li>
+</ul>
+</li>
+<li>El <strong>tiempo de propagación</strong> \(T_{prop} = \frac{distancia}{V_{prop}}\) es
+el tiempo desde que el bit es transmitido hasta que llega al receptor.
+<ul>
+<li>La velocidad de propagación \(V_{prop}\) es algo propio del medio de
+transmisión, por lo general cercano a la velocidad de la luz (suele ser
+una constante multiplicada por la velocidad de la luz).</li>
+<li>Ocupa una porción significativa de tiempo en conexiones entre dos puntos
+muy lejanos.</li>
+</ul>
+</li>
+<li>El <strong>tiempo de encolamiento</strong> \(T_{queue}\) es el tiempo que espera un
+frame en un buffer hasta ser transmitido. Dependiendo del estado de
+congestión de la red puede ser significativo o no.</li>
+<li>El <strong>tiempo de procesamiento</strong> \(T_{proc}\) es el tiempo que se tarda en
+leer el header de un frame y decidir qué hacer con él. En la práctica se lo
+asume nulo o poco significativo.</li>
+</ul>
+<p>Por último, la <strong>capacidad de volumen</strong> \(C_{vol}\) de un canal sería la cantidad de bits
+que entran en el canal desde que se envía el primer bit hasta que llega al
+receptor (una suerte de flujo máximo de bits para quienes hayan cursado algo
+III).</p>
+<p>$$
+C_{vol} = \text{Delay} * V_{tx}
+$$</p>
+<p>Sin embargo, para los protocolos punto a punto se es un poco más
+específico y se mide como la cantidad de bits que entran <strong>hasta recibir el
+primer ACK</strong></p>
+<p>$$
+C_{vol} = \text{RTT} * V_{tx}
+$$</p>
+<p>(Recuerdo: antes mencionamos que el tamaño óptimo de ventana era \(SWS = \frac{\text{RTT} * V_{tx}}{|frame|} = \frac{C_{vol}}{|frame|}\))</p>
+<p>Entonces... ¿Por qué es óptimo?</p>
+<p>Recordamos que la eficiencia del protocolo de ventana deslizante se medía como:</p>
+<p>$$
+\eta_{proto} = \frac{T_{tx}(V)}{\text{RTT}(F)}
+$$</p>
+<p>\(T_{tx}(V)\) Era el tiempo que tardaba en mandar todos los frames de la ventana. Eso lo podemos pensar como:</p>
+<p>$$
+T_{tx}(V) = \frac{SWS * |frame|}{V_{tx}}
+$$</p>
+<p>Entonces:</p>
+<p>$$
+\eta_{proto} = \frac{SWS * |frame|}{V_{tx} * \text{RTT}(F)} \\
+SWS = \eta_{proto} * \frac{V_{tx} * \text{RTT}(F)}{|frame|}
+$$</p>
+<p>Y asumiendo que \(\eta_{proto} = 1\) dado que es óptimo obtenemos que:</p>
+<p>$$
+SWS = \frac{V_{tx} * \text{RTT}(F)}{|frame|}
+$$</p>
 
                     </main>
 
