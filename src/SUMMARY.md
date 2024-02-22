@@ -1,6 +1,7 @@
 # Summary
 
-- [Unidad 1 - Introducción, conceptos básicos y nivel físico](./unidad_1.md)
+- [Unidad 0 - Introducción, conceptos básicos](./unidad_0.md)
+- [Unidad 1 - Nivel físico](./unidad_1.md)
 - [Unidad 2 - Nivel de Enlace](./unidad_2.md)
 - [Unidad 3 - Medios Compartidos](./unidad_3.md)
 - [Unidad 4 - Nivel de Red](./unidad_4.md)
