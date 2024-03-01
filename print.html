@@ -1070,6 +1070,351 @@ final.</li>
 <hr />
 <p>TODO: Resumir diapos 20-24 inclusive (no encuentro referencia en la docu)</p>
 <hr />
+<h2 id="redes-compartidas-redes-inalámbricas"><a class="header" href="#redes-compartidas-redes-inalámbricas">Redes Compartidas (Redes inalámbricas)</a></h2>
+<ul>
+<li>En las redes inalámbricas, la señal disminuye / se atenúa con la distancia (mayor impacto que en no inalámbricas)</li>
+<li>Además las fuentes de ruido son más impredecibles</li>
+<li>Qué sería compartir el medio acá? Se comparte el ancho de banda (el espectro electromagnético).</li>
+<li>Está regulado con qué potencia se transmite</li>
+<li>El medio es mucho más fácilmente "pinchable" (es por eso que se vuelve una verdadera necesidad encriptar la data)</li>
+</ul>
+<h3 id="bandas-no-licenciadas"><a class="header" href="#bandas-no-licenciadas">Bandas no licenciadas</a></h3>
+<p>Son bandas para las cuales no tengo que pedir permiso para transmitir</p>
+<ul>
+<li>900 mhz</li>
+<li>2.4 ghz</li>
+<li>5 ghz</li>
+</ul>
+<p>Si alguien quiere transmitir en la misma frecuencia me va a generar
+interferencia. Entonces surge la pregunta, si 2.4 es una banda no licenciada y
+todo el mundo lo usa, cómo es que mi wifi no es interferido por el del vecino?
+Eso es el motivo por el cual hay límites a la potencia de la señal.</p>
+<p>Además, las bandas se pueden particionar en canales. Por ejemplo, para 2.4 en
+wifi tengo la banda partida en 13 canales y sólo puedo usar 3 de esos canales:
+el 1, 6 y 7 y cada uno tiene un ancho de 22mhz.</p>
+<p>Para el caso de 5ghz, puedo tener canales de 20, 40, 80 y 160 mhz</p>
+<p>Más adelante surgió la idea de usar el espectro expandido. La idea es saltar
+entre frecuencias varias veces por segundo. Surgió en el contexto de
+comunicaciones militares porque hacía más difícil detectar la señal y casi
+imposible meterle ruido (el Tanembaum usa el término <a href="https://youtu.be/FcArnepkhv0?si=oO4tNudSObUe5nF5&amp;t=86">jammed</a>).</p>
+<h2 id="protocolos-de-acceso-múltiple"><a class="header" href="#protocolos-de-acceso-múltiple">Protocolos de acceso múltiple</a></h2>
+<p>Hay 2 problemas importantes que surgen en el uso del medio compartido para wireless:</p>
+<ul>
+<li>El <strong>problema de la estación oculta</strong>: si tengo la transmisión <code>A -&gt; B     C</code>, <code>C</code> sensa el medio para transmitir y no detecta a <code>A</code> por estar fuera de alcance. Entonces empieza a transmitir, introduciendo ruido en lo que b detecta.</li>
+<li>El <strong>problema de la estación expuesta</strong>: si tengo las transmisiones <code>A &lt;- B      C   D</code> y C quiere transmitir a <code>D</code>, puede que <code>C</code> sense el medio y como detecta la transmisión de <code>B</code> a <code>A</code> entonces decide no transmitir cuando en realidad la transmisión de <code>C</code> a <code>D</code> no afectaría la señal que <code>A</code> recibe.</li>
+</ul>
+<p>Para paliar estos problemas tenemos una variante de CSMA que es <strong>CSMA/CA</strong> (o sea con <strong>collision avoidance</strong>).</p>
+<h3 id="csmaca"><a class="header" href="#csmaca">CSMA/CA</a></h3>
+<ul>
+<li>Antes de transmitir, escucho
+<ul>
+<li>Si no está ocupado espera un tiempo llamado <strong>espaciado entre tramas
+(IFS)</strong></li>
+<li>Si está ocupado o se ocupa durante la espera hay que esperar hasta el
+final de la transacción
+<ul>
+<li>Cuando termina la transacción se ejecuta un algoritmo de backoff
+<ul>
+<li>se espera un valor de una uniforme en un intervalo llamado
+<strong>ventana de contención</strong>
+<ul>
+<li>se mide en slots</li>
+<li>si durante ese tiempo el medio está ocupado durante un tiempo
+mayor al IFS, se suspende la espera hasta que se cumpla la
+condición de canal libre</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>En WiFi se espera recibir ACK a diferencia de ethernet. Si no se recibe se
+retransmite a diferencia de ethernet. Si no se recibe se retransmite.</p>
+<h2 id="modelo-de-referencia-de-80211-wifi"><a class="header" href="#modelo-de-referencia-de-80211-wifi">Modelo de Referencia de 802.11 (WiFi)</a></h2>
+<p>Lo componen 3 subcapas de LLC:</p>
+<ul>
+<li>A nivel físico:
+<ul>
+<li>PMD (Physical Media Dependent)
+<ul>
+<li>Infrarrojos</li>
+<li>FHSS</li>
+<li>DSSS</li>
+<li>OFDM (multiplexación por división de frecuencia ortogonal) + MU-MIMO
+(multi-user, multiple input, multiple output)
+<ul>
+<li>SU-MIMO (Single User) permite al AP comunicarse con un único
+dispositivo a la vez. Al dividir el ancho de banda en canales
+independientes permite conectarse con varios dispositivos a la
+vez.
+<img src="./img/mu-mimo.png#center" alt="" /></li>
+</ul>
+</li>
+<li>Hoy ya existe OFDMA que es una variante que usa un único canal para
+transmitir todo pero ajusta en base al volumen de tráfico de cada
+canal.</li>
+</ul>
+</li>
+<li>PLCP (Physical Layer Convergence Procedure)</li>
+</ul>
+</li>
+<li>A nivel enlace:
+<ul>
+<li>subcapa MAC:
+<ul>
+<li>Acceso al medio: CSMA/CA</li>
+<li>usa Ack</li>
+<li>Fragmentación</li>
+<li>Confidencialidad (opcional)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Wifi per se se implementó de forma half duplex (hacerlo full duplex aumentaría costos de fabricación)</p>
+<h3 id="ieee-80211-mac"><a class="header" href="#ieee-80211-mac">IEEE 802.11 MAC</a></h3>
+<p>Hasta la versión más sencilla de Wifi trabaja con las DCF (Función de
+Coordinación distribuída o CSMA-CA). El período de contensión de CSMA-CA desde
+el punto de vista estadístico nos da un acceso "equitativo al medio".</p>
+<ul>
+<li>Se minimiza la colisión entre tramas</li>
+<li>Mientras el canal está libre el nodo decrementa el backoff counter
+<ul>
+<li>si llega a 0 el nodo envía el frame
+<ul>
+<li>si no recibe ack (o sea asume que hubo un error/colisión en la transmisión), se elige una nueva ventana de contensión en un rango del doble del anterior.</li>
+<li>se repite hasta que el canal esté libre para enviar</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<div id="admonition-evolución-wifi" class="admonition admonish-info">
+<div class="admonition-title">
+<p>Evolución WiFi</p>
+<p><a class="admonition-anchor-link" href="unidad_3.html#admonition-evolución-wifi"></a></p>
+</div>
+<div>
+<p>En la siguiente tabla se puede ver la evolución del protocolo a lo largo del
+tiempo:</p>
+<p><img src="./img/wifi_evolution.png#center" alt="" /></p>
+<p>Ojo, la velocidad es en bps (a nivel físico). Una estimación grosera es por
+ejemplo para 802.11n de los 600Mbps, <strong>en tu lan</strong> vas a alcanzar unos 300Mbps.
+El resto se lo llevan los headers del mismo protocolo entre otras cosas.</p>
+</div>
+</div>
+<div id="admonition-ejercicio-de-final---análisis-de-performance" class="admonition admonish-warning">
+<div class="admonition-title">
+<p>Ejercicio de final - Análisis de Performance</p>
+<p><a class="admonition-anchor-link" href="unidad_3.html#admonition-ejercicio-de-final---análisis-de-performance"></a></p>
+</div>
+<div>
+<ul>
+<li>Tenemos una notebook que accede al servicio de banda ancha ADSL mediante un <strong>AP 802.11ac</strong>.</li>
+<li>El AP se conecta al Home Gateway</li>
+<li>El servicio ADSL tiene una velocidad de transmisión máxima de 1Gbps</li>
+<li>Queremos hacer una transferencia de un archivo de 10GB desde un servidor en USA a la notebook.</li>
+</ul>
+<p>Cuánto estimamos que demora la transferencia?</p>
+<ol>
+<li>Si hacen 10GB * 8 / 1Gbps... hay tabla. Hay que chequear más cosas.</li>
+</ol>
+<ul>
+<li>Un dato importante es que la notebook se conecta mediante un AP 802.11ac!</li>
+<li>La velocidad del servicio de banda ancha, a qué nivel está medido? (vamos a
+suponer que está medido a nivel IP)</li>
+<li>cuál es la velocidad de bajada y cuál es la de subida? (en gral la de subida
+es aprox. 1 a 20 veces la de bajada).
+<ul>
+<li>si es un 802.11n ya tengo a nivel enlace un cuello de botella de 390Mbps</li>
+<li>si es un 802.11ac Wave 1 también es cuello de botella</li>
+<li>También depende de qué soporte la notebook.</li>
+<li>En el oral si no está especificado habría que preguntar</li>
+<li>Hay que ver el RTT del servidor también</li>
+</ul>
+</li>
+<li>otra cosa que puede pasar es que haya atenuación y obstáculos en el medio, y
+en esos casos el ap baja de 1024 QAM por ejemplo a un esquema de modulación
+más bajo, y por entre transmite a una velocidad más baja.</li>
+</ul>
+</div>
+</div>
+<h3 id="anomalía-del-wifi"><a class="header" href="#anomalía-del-wifi">Anomalía del Wifi</a></h3>
+<ul>
+<li>WiFi da acceso equitativo al medio.</li>
+<li>Los nodos de más baja velocidad consumen más "tiempo de aire", y además al
+ser más rápidos los nodos más rápidos reciben menos tiempo de aire.</li>
+<li>en consecuencia los nodos con velocidad baja degradan la velocidad de los
+nodos de mayor velocidad.</li>
+</ul>
+<h2 id="data-link-layer-switching"><a class="header" href="#data-link-layer-switching">Data Link Layer Switching</a></h2>
+<p>Una <strong>LAN</strong> (Local Area Network) es una red privada que opera de forma cerrada.
+Vimos además que en la infraestructura de red tenemos algo que nos conecta a la
+red interna del proveedor de internet (DSLAM por ejemplo). Ahora, qué pasa
+cuando tengo varias LANs y las quiero unir para que se comporten como una única
+LAN.</p>
+<p>Esto se puede lograr con dispositivos llamados <strong>bridges</strong>, hoy también
+llamados switches. Notar que por ahora nos vamos a referir a los switches como
+dispositivos de capa de enlace pero también hay switches que operan en la capa
+de red. Al operar en capa de enlace, sólo les interesa forwardear los frames en
+base a la dirección de destino. Cualquier protocolo montado sobre la capa de
+enlace (sea IP, AppleTalk, u otros) van a ser soportados por un bridge, a
+diferencia de lo que ocurre con los switches de la capa de red que sólo
+soportan los protocolos para los que se los programó.</p>
+<p>Algunos casos de uso:</p>
+<ul>
+<li>En la facu cada departamento tiene su propia LAN, pero además queremos tener
+una única red para todos los dispositivos de la facultad</li>
+<li>A veces queremos partir una LAN en muchas para distribuir la carga (si no
+floodeariamos toda la red por cada comunicación)
+<ul>
+<li>Esto también lograría particionar el dominio de colisión</li>
+<li>cómo logramos esto? Bueno, los bridges sólo forwardean frames por los
+puertos que haga falta.</li>
+</ul>
+</li>
+</ul>
+<div id="admonition-supongamos" class="admonition admonish-info">
+<div class="admonition-title">
+<p>Supongamos...</p>
+<p><a class="admonition-anchor-link" href="unidad_3.html#admonition-supongamos"></a></p>
+</div>
+<div>
+<p>Veamos lo que pasa bajo las siguientes 3 siguaciones:</p>
+<p><img src="./img/network_topologies.png" alt="" /></p>
+<ul>
+<li>En a) tengo todos los hosts conectados a un mismo hub, por lo que todos
+comparten el mismo medio físico y puede haber colisiones (y tenemos que
+pensar en modelos de ack o un CSMA/CA)</li>
+<li>En b) Tengo la LAN separada en 2 de cada lado hay un dominio de colisión y
+por ende todavía pueden haber colisiones.</li>
+<li>En c) están todos los hosts conectados a un switch, por ende ahora la
+cuestión pasa por el mismo, que guarda en sus buffers los frames y va
+despachando. En este caso directamente desaparecen las potenciales
+colisiones, ACK, CSMA/CD y pasa a ser un problema algorítmico de cómo el
+switch maneja esos buffers y los dispatch.</li>
+</ul>
+</div>
+</div>
+<p>Notar que para que estas cosas sean posibles, es necesario que funcionen de la
+forma más transparente posible y sin mucha configuración adicional. Y los
+dispositivos dentro de una LAN no deberían de enterarse que forman parte de una
+LAN más grande a priori. Se usan dos algoritmos para bridges que nos proveen
+dicha transparencia:</p>
+<ul>
+<li>Primero un algoritmo para "aprender" dónde no hace falta forwardear frames (o
+sea evitar generar tráfico innecesario).</li>
+<li>Y además un algoritmo (de AGM) que nos permite romper los ciclos dentro de la
+red (para que no queden frames zombies dando vueltas).</li>
+</ul>
+<h3 id="cómo-operan-los-bridges--switches"><a class="header" href="#cómo-operan-los-bridges--switches">Cómo operan los bridges / switches</a></h3>
+<p>Los bridges operan en modo promiscuo, lo que significa que acepta todos los
+frames que llegan en cada uno de sus puertos y decide si forwardea o descarta
+el frame y en caso de forwardearlo por cuál puerto. Para decidir eso último se
+basa en la dirección de destino de la metadata del frame.</p>
+<p>Una forma de implementar esto podría ser con una tabla de hash que mapea
+<code>dirección destino -&gt; puerto de salida</code>. Sin embargo la tabla inicia vacía, por
+lo que se procede a usar un algoritmo de flooding. Cada frame que vaya a un
+host que todavía no conocemos se forwardea al resto de los puertos, y una vez
+que se conoce se deja de forwardear y se manda por el puerto correspondiente. Y
+cómo me entero de qué puerto le corresponde a una dirección? Bueno, puedo ver
+la dirección del host que envía el frame.</p>
+<p>La topología de la red puede cambiar. Para manejar esos casos, lo que hacemos
+es guardarnos la asociación <code>addr -&gt; (port, timestamp)</code>. Cada vez que recibo un
+frame y el host src está en la tabla de hash, actualizo el timestamp, y
+periódicamente se limpian las entradas de la tabla que tengan más de un par de
+minutos.</p>
+<p>El algoritmo entonces se puede resumir a:</p>
+<pre><pre class="playground"><code class="language-rust"><span class="boring">#![allow(unused)]
+</span><span class="boring">fn main() {
+</span>if not table.contains(frame.dstAddr) { forward_except_port(frame, frame.srcPort) } // Descarto el frame (srcPort en realidad no es parte del frame, es una simplificación)
+else if frame.srcPort == table[frame.dstAddr] {  } // Descarto el frame
+else { send(frame, table[frame.dstAddr]) } // Lo mando por el puerto que corresponde
+<span class="boring">}</span></code></pre></pre>
+<h4 id="spanning-tree-bridges"><a class="header" href="#spanning-tree-bridges">Spanning Tree Bridges</a></h4>
+<p>Para mejorar la disponibilidad y tolerancia a fallos, es normal que hayan
+enlaces redundantes, cosa de que si uno falla no se fragmente la red. Sin
+embargo, este tipo de situaciones trae algunos problemas ya que introducimos
+ciclos en la topología de la red.</p>
+<p>Por qué los ciclos son un problema? Porque si recordamos el algoritmo hace que
+forwardiemos frames cuyos destinatorios no conocemos. Entonces el frame se
+mueve permanentemente a lo largo del ciclo. Para solucionar esto, se establece
+un protocolo para los mismos bridges que les permite mantener una idea de AGM
+de la red. Y sí, nos vamos a olvidar de algunos enlaces para lograr esta
+estructura acíclica.</p>
+<p>Para construir dicho Árbol Generador Mínimo, los bridges corren un algoritmo
+distribuido. El mismo consiste en:</p>
+<ul>
+<li>Cada bridge periódicamente broadcastea un mensaje de configuración a todos
+sus puertos</li>
+<li>También procesa los mensajes de configuración que reciben de sus vecinos.
+Estos mensajes no son forwardeados ya que no queremos caer en el problema de
+loops nuevamente.</li>
+<li>El primer paso es ponerse de acuerdo en qué nodo va a ser la raiz del AGM.
+Para eso incluyen en sus mensajes de configuración su MAC address junto al
+identificador del bridge que creen que es la raíz.
+<ul>
+<li>Eligen como raíz al de identificador más chico</li>
+</ul>
+</li>
+<li>Una vez elegida la raíz, se construye un arbol de caminos mínimos desde la
+misma hasta cada otro bridge. Las distancias son la cantidad de saltos que se
+requieren para llegar de un nodo a otro. Los casos de empate se resuelven
+mirando el identificador.
+<ul>
+<li>Para encontrar los caminos mínimos, los bridges mantienen el camino
+mínimo que tienen hasta la raíz. Y "apagan" los puertos que no forman
+parte de ese camino (notar que el camino de cada puerto puede ser
+independiente de los otros).</li>
+</ul>
+</li>
+<li>Una vez que el AGM se estabiliza, los bridges vuelven al modo de operación
+usual. Sin embargo el algoritmo se corre cada tanto para detectar cambios en
+la topología de la red y actualizar el árbol.</li>
+</ul>
+<h3 id="vlans"><a class="header" href="#vlans">VLANs</a></h3>
+<p>Las VLANs surgen como consecuencia de la necesidad de desacoplar la conexión
+física de una posible conexión lógica (diferentes áreas en una empresa, por
+ejemplo) y brindar mayor flexibilidad en el manejo de la red.</p>
+<p>Usan Switches especiales que están al tanto de la existencia de las VLANs.</p>
+<ul>
+<li>Requieren que los bridges tengan una configuración de qué VLANs son
+accedibles por qué puerto.
+<ul>
+<li>Dicha marca sirve como filtro en todo el algoritmo del bridge. O sea sólo
+forwardea y broadcastea por los puertos correspondientes a la vlan del
+frame recibido.</li>
+</ul>
+</li>
+</ul>
+<p>Para soportar esto se agregó a partir del estándar <strong>802.1Q</strong> un tag de VLAN al
+header del frame ethernet. Una de las claves para llevar esto a la práctica es
+que a priori los hosts no se enteran de la existencia de las VLANs, por lo que
+puede ser info que se agrega una vez sale del host. De hecho el primer bridge
+que sea VLAN-aware es el que agrega el campo y el último bridge lo saca.</p>
+<ul>
+<li>Todos los hosts de un puerto tienen que pertenecer a la misma VLAN</li>
+<li>El único cambio al header es el agregado de 2 bytes:
+<ul>
+<li>VLAN protocol ID (constante = <code>0x8100</code>)</li>
+<li>Un byte compuesto por 3 fieldss:
+<ul>
+<li>un bit de prioridad (no relacionado a VLAN pero lo agregaron porque
+no pasa seguido que se cambia el protocolo). Sirve para identificar
+tráfico con requisito de real-time vs soft real-time.</li>
+<li>un bit de CFI (canonical format indicator), servía para marcar si era
+big endian / little endian pero después se cambió (sth sth politics
+sth).</li>
+<li>un VLAN Identifier de 12 bits (o sea el "color" de la VLAN al que
+pertenece el frame)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="unidad-4---nivel-de-red"><a class="header" href="#unidad-4---nivel-de-red">Unidad 4 - Nivel de Red</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="unidad-5---ruteo"><a class="header" href="#unidad-5---ruteo">Unidad 5 - Ruteo</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="unidad-6---nivel-de-transporte"><a class="header" href="#unidad-6---nivel-de-transporte">Unidad 6 - Nivel de Transporte</a></h1>
