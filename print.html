@@ -1416,8 +1416,727 @@ pertenece el frame)</li>
 </li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="unidad-4---nivel-de-red"><a class="header" href="#unidad-4---nivel-de-red">Unidad 4 - Nivel de Red</a></h1>
+<p><img src="./img/osi_isp.png#center" alt="" /></p>
+<p>Retomando el modelo OSI, podemos ver que de capa 3 para abajo tenemos lo que se
+llama el <strong>límite de subred de comunicación</strong>, que delimita las capas sobre las
+que operan los isp.</p>
+<h2 id="redes-escalables-con-switches"><a class="header" href="#redes-escalables-con-switches">Redes escalables... con switches</a></h2>
+<p>Peterson afirma que internet es una red <strong>escalable</strong>. Por escalable vamos a
+entender como aquello que cuando crece, el costo de su
+mantenimiento/administración es mínimo. Internet no solo es escalable, es
+<strong>altamente escalable</strong>.</p>
+<p>Cómo se logra eso? Principalmente mediante <strong>routers/switches</strong>. Su objetivo
+principal es conmutar o forwardear paquetes. Dependiendo el tipo de switch, van
+a distribuir paquetes mediante:</p>
+<ul>
+<li><strong>circuitos virtuales</strong></li>
+<li><strong>conmutación de datagramas</strong></li>
+</ul>
+<p>Notar que ambos pertenecen al paradigma de conmutación de paquetes, pero
+también existe lo que antes se usaba que era la conmutación de circuitos.</p>
+<h3 id="conmutación-de-paquetes"><a class="header" href="#conmutación-de-paquetes">Conmutación de paquetes</a></h3>
+<p>Tenemos 2 paradigmas (que usan una u otra forma de distribuir paquetes):</p>
+<ul>
+<li>Orientado a conexión (circuitos virtuales): acá también mando varios
+paquetes, pero el camino es fijo. <img src="./img/virtual_circuits.png" alt="" />
+<ul>
+<li>necesito "alguna magia" que arme toda la ruta</li>
+<li>le decimos "orientado a conexión" porque previamente establezco una
+comunicación entre ambos hosts.</li>
+<li>tengo 3 fases:
+<ul>
+<li>establecer conexión</li>
+<li>mandar datos</li>
+<li>levantar la conexión</li>
+</ul>
+</li>
+<li>llegan en orden</li>
+</ul>
+</li>
+<li>Sin conexión (datagramas IP): parto la info a mandar en datagramas (cachitos
+de info) y la mando, cada uno puede tomar una ruta a destino distinta y
+podrían llegar desordenados. <img src="./img/datagrams.png" alt="" />
+<ul>
+<li><strong>no existe una fase para establecer una conexión</strong></li>
+<li>como cada paquete se envía de forma independiente, tiene que ser
+autosuficiente. O sea necesita dir fuente y dir destino (cof cof IP)</li>
+</ul>
+</li>
+</ul>
+<p>Si bien circuitos virtuales estaba medio muerto, con la tecnología 5G tuvo un
+renacimiento, aunque se lo llama <strong>slicing</strong></p>
+<h4 id="conmutación-sin-conexión"><a class="header" href="#conmutación-sin-conexión">Conmutación sin conexión</a></h4>
+<ul>
+<li>cada switch mantiene una tabla de forwarding
+<ul>
+<li>uso un <strong>algoritmo de ruteo</strong> para armarla</li>
+</ul>
+</li>
+<li>la tabla me dice a dónde mandar un paquete en base a la dirección destino.</li>
+<li>tuvo que haber un algoritmo de seteo inicial para armar esas tablas</li>
+</ul>
+<p><img src="./img/datagram_routing_scheme.png" alt="" /></p>
+<h4 id="conmutación-orientada-a-conexión--circuitos-virtuales"><a class="header" href="#conmutación-orientada-a-conexión--circuitos-virtuales">Conmutación orientada a conexión / Circuitos virtuales</a></h4>
+<ul>
+<li>al igual que datagramas se arma una tabla pero una <strong>tabla de circuitos
+virtuales</strong> (no vamos a estudiar cómo). La misma tiene:
+<ul>
+<li>Puerto por donde llega un paquete</li>
+<li>VCI (id del circuito) de entrada</li>
+<li>puerto de salida del paquete</li>
+<li>id del VCI de salida</li>
+</ul>
+</li>
+<li>cómo armo la tabla de circuitos? cómo armo los VCI?</li>
+<li>cómo sé dónde está cada nodo?</li>
+<li>Tengo 2 tipos:
+<ul>
+<li>permanente (la define el administrador)
+<ul>
+<li>se tiene que configurar y recién ahí puedo proceder a mandar datos</li>
+</ul>
+</li>
+<li>por solicitud o conmutado
+<ul>
+<li>se mandan mensajes de solicitud de conexión a la red</li>
+<li>se arma una cadena de switches que llevan hasta el host destino que
+tienen que aceptar la conexión y propagar la solicitud al siguiente
+switch / nodo.</li>
+<li>una vez construido el circuito virtual se empiezan a enviar datos</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Cuál sería algún incentivo para preferir circuitos virtuales? Al establecer la
+conexión uno puede "reservar" recursos (léase ancho de banda, buffers, etc.)
+puedo garantizar cierta calidad de servicio y mejor control de congestión.</p>
+<h4 id="modelo-de-datagrama-vs-circuitos"><a class="header" href="#modelo-de-datagrama-vs-circuitos">Modelo de Datagrama vs Circuitos</a></h4>
+<p>Datagrama:</p>
+<ul>
+<li>No hace falta esperar a un RTT para establecer una conexión</li>
+<li>Inmediatamente disponible para mandar datos</li>
+<li>Envío paquete sin establecer conexión</li>
+<li>Estadísticamente los datagramas llegan en orden</li>
+<li>Hago mi mejor esfuerzo para rutear el paquete en la red</li>
+</ul>
+<p>Circuitos Virtuales:</p>
+<ul>
+<li>Necesito fase inicial para establecer una conexión y una final para
+liberarla, que no transportan datos del usuario
+<ul>
+<li>tengo algo de overhead</li>
+</ul>
+</li>
+<li>Una vez establecido el circuito se usa siempre eso para mandar (no es adaptable a fallas/congestión)</li>
+</ul>
+<p>Ahora, una vez establecida la conexión los circuitos virtuales funcionan mucho
+mejor. Por qué entonces ganó datagramas.</p>
+<ul>
+<li>Circuitos virtuales requería más infraestructura del lado del ISP
+<ul>
+<li>Eso también permitía ser más exigentes con el costo del servicio (ej: te
+cobro por cada paquete transmitido)</li>
+<li>Al ser más complejo es también menos escalable</li>
+</ul>
+</li>
+<li>Si bien con datagramas la comunicación es "boba", eventualmente se armaron
+protocolos que permiten resolver algunos de los problemas que circuitos
+virtuales resolvía mediante infra, pero con software (esa solución es la que
+conocemos como TCP).</li>
+</ul>
+<div id="admonition-conmutación-de-circuitos-vs-conmutación-de-paquetes" class="admonition admonish-note">
+<div class="admonition-title">
+<p>Conmutación de circuitos vs. Conmutación de paquetes</p>
+<p><a class="admonition-anchor-link" href="unidad_4.html#admonition-conmutación-de-circuitos-vs-conmutación-de-paquetes"></a></p>
+</div>
+<div>
+<p>Algo en lo que se hizo mucho incapié es en el hecho de que podemos llegar a
+confundir circuitos virtuales con conmutación de circuitos, y que por ende
+ambos operan en capas 1, 2 y 3. Sin embargo, recordemos que conmutación de
+circuitos refiere a lo visto para la unidad 0 y aplica únicamente a capa 1
+(física).</p>
+</div>
+</div>
+<h3 id="ip-en-internet"><a class="header" href="#ip-en-internet">IP en Internet</a></h3>
+<ul>
+<li>Permito interconexión de redes</li>
+<li>A priori puedo tener distintos tipos de conexiones a lo largo del camino que
+toma el paquete, pero el "glue code" viene a ser ip: <img src="./img/ip_stack.png" alt="" /></li>
+<li>IP <strong>ES SENCILLO</strong>
+<ul>
+<li>El formato fundamentalmente es agregar dos campos, hay más cosas pero el
+core son los campos de dirección fuente y destino</li>
+</ul>
+</li>
+</ul>
+<h3 id="campos-del-header-ip-versión-4"><a class="header" href="#campos-del-header-ip-versión-4">Campos del header IP (versión 4)</a></h3>
+<ul>
+<li>Header de 20bytes con 40 bytes extra para campos opcionales</li>
+<li>Los campos
+<ul>
+<li><em>Versión</em>: para tener versiones coexistiendo</li>
+<li><em>Longitud del header</em>: ya que puede crecer por los opcionales</li>
+<li><em>DiffServ/ECN</em>: permite dar prioridad a cierto tráfico (ej: puedo
+configurar los routers de mi red para que prioricen al ECN específico)</li>
+<li><em>Longitud total</em>: en bytes e incluyendo el header</li>
+<li><em>Fragmentación</em>: Ta compuesto por varios sub-campos: Identificación, bit
+de No fragmentar (DF), bit de más fragmentar (MF) y un bit de
+desplazamiento.
+<ul>
+<li>No todas las tecnologías de acceso al medio tiene el mismo tamaño de
+trama. Entonces IP necesita un mecanismo de fragmentación para pasar
+por distintos tipos de redes con distintas tecnologías de acceso al
+medio.</li>
+</ul>
+</li>
+<li><em>TTL</em>: es un contador que se decrementa con cada salto entre routers. Si
+llega a 0 se descarta el paquete.</li>
+<li><em>Checksum</em>: sólo del header, no de los datos (TCP es el único que hace
+correción de errores)</li>
+<li><em>Dirección fuente y destino</em>: de 32 bits</li>
+<li><em>Protocolo</em>: un identificador que le permite al router saber qué lleva el paquete IP
+<img src="./img/ip_protocol_field.png" alt="" /></li>
+</ul>
+</li>
+</ul>
+<h4 id="fragmentación-y-re-ensamblado"><a class="header" href="#fragmentación-y-re-ensamblado">Fragmentación y re-ensamblado</a></h4>
+<ul>
+<li>Cada tecnología de acceso al medio tiene (a nivel de enlace), un <strong>MTU</strong>
+(Maximum Transmission Unit)
+<ul>
+<li>ej: en Ethernet son 1500 bytes, en FDDI 4500 bytes</li>
+</ul>
+</li>
+<li>Entonces, IP se adapta a la tecnología de enlace
+<ul>
+<li>Si recibo un datagrama y MTU &lt; |Datagrama|, lo tengo que partir en
+fragmentos o <strong>fragmentar</strong> y el host destino los <strong>reensabla</strong></li>
+<li>Los fragmentos llevan un identificador cosa de saber cuáles corresponden
+a un mismo datagrama</li>
+<li>Además contienen:
+<ul>
+<li>un offset para poder ordenarlos</li>
+<li>un bit para marcar el último fragmento</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Hoy en día, estadísticamente, la fragmentación es mínima (si tenés mucha
+fragmentación puede que te estén hackeando).</li>
+</ul>
+<h3 id="direccionamiento-global"><a class="header" href="#direccionamiento-global">Direccionamiento Global</a></h3>
+<ul>
+<li>Se pensó una organización <strong>jerárquica</strong>
+<ul>
+<li>Una dirección compuesta por red + host</li>
+</ul>
+</li>
+<li>Las direcciones son "globalmente únicas"</li>
+<li>Esquema de clases <em>A</em>, <em>B</em> y <em>C</em>
+<ul>
+<li>las clases más altas pueden tener más hosts</li>
+</ul>
+</li>
+</ul>
+<h3 id="forwarding-de-ip"><a class="header" href="#forwarding-de-ip">Forwarding de IP</a></h3>
+<p>Cómo hacen los routers para saber a dónde mandar un datagrama?</p>
+<ul>
+<li>El datagrama recordemos tiene la dirección destino</li>
+<li>Si el router está en dicha dirección destino, entonces hace el forward al
+host</li>
+<li>Si no está conectado directamente a esa red, tiene que hacer un forward a
+otro router que lo elige en base a su <strong>tabla de forwarding</strong>
+<ul>
+<li>mapea una dirección de red al <em>next hop</em></li>
+</ul>
+</li>
+<li>Además cada host tiene un default router</li>
+</ul>
+<h3 id="ipv6"><a class="header" href="#ipv6">IPV6</a></h3>
+<ul>
+<li>Se definió en la década del 90'.</li>
+<li>El número de dispositivos totales que soportaba IPv4 admitía ~4300 millones de direcciones.</li>
+<li>En su momento no se pensaba que ibamos a quedarnos sin direcciones pero hoy en día ya es una realidad.</li>
+<li>Usa 128 bits de direccionamiento en lugar de sólo 32 bits</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="unidad-5---ruteo"><a class="header" href="#unidad-5---ruteo">Unidad 5 - Ruteo</a></h1>
+<h2 id="internetworking"><a class="header" href="#internetworking">Internetworking</a></h2>
+<p>En el 74' publican un paper de lo que se iba a a convertir en el protocolo
+TCP/IP. Sin embargo, a este le faltaba una parte fundamental de lo que es hoy
+en día que es el <strong>ruteo</strong>.</p>
+<h3 id="sistemas-autónomos"><a class="header" href="#sistemas-autónomos">Sistemas autónomos</a></h3>
+<p>Uno podría decir que internet es la interconexión entre <strong>sistemas autónomos</strong>, que
+los definimos como un conjunto de routers administrados por la misma entidad.
+Por ejemplo, la red de algún ministerio, la de la facultad, la de tu trabajo,
+etc.</p>
+<ul>
+<li>Tengo 2 tipos de ruteo:
+<ul>
+<li>interno(IGP): lo que se mueve dentro del sistema autónomo</li>
+<li>externo(EGP): lo que va hacia otro sistema autónomo
+<ul>
+<li>hoy en día el protocolo estandarizado para esto es <strong>BGP</strong> (Border
+Gateway Protocol)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>A priori lo que pasa adentro de un sistema autónomo queda dentro del sistema
+autónomo. Los otros sistemas autónomos no conocen esos detalles.
+<ul>
+<li>Dicho eso, hay 2 protocolos dentro de los más usados
+<ul>
+<li><strong>RIP</strong></li>
+<li><strong>OSPF</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Nosotros vamos a priorizar protocolos de ruteo interno. De ruteo externo más
+que nada hablamos de las políticas.</p>
+<div id="admonition-analizando-la-red" class="admonition admonish-info">
+<div class="admonition-title">
+<p>Analizando la red</p>
+<p><a class="admonition-anchor-link" href="unidad_5.html#admonition-analizando-la-red"></a></p>
+</div>
+<div>
+<p>Si pensamos en la internet como la interconexión de sistemas autónomos, podemos también querer analizar el grafo subyacente de esas interconexiones. Pero esa no es la única forma de analizarlo. Podemos armar:</p>
+<ul>
+<li>grafo de routers</li>
+<li>grafo de Web servers</li>
+<li>grafo de Name servers</li>
+<li>grafo P2P</li>
+<li>grafo CDN</li>
+<li>etc.</li>
+</ul>
+</div>
+</div>
+<h3 id="ruteo"><a class="header" href="#ruteo">Ruteo</a></h3>
+<p>En última instancia, nuestro problema se reduce a poder mandar los
+paquetes/frames de una punta a la otra. Tenemos 2 procesos:</p>
+<ul>
+<li>Forwarding (esto es similar a lo que vimos con los learning bridges) consiste
+en <strong>elegir una puerta de salida</strong> mirando la dirección destino y tablas de
+ruteo.</li>
+<li>Ruteo: este es el proceso por el que <strong>construimos las tablas de ruteo</strong>
+<ul>
+<li>Es un problema de grafos</li>
+<li>Vemos a la red como un conjunto de nodos y arcos pesados</li>
+</ul>
+</li>
+</ul>
+<p>Además hay 2 tipos de ruteo:</p>
+<ul>
+<li>Estático: lo configuro una vez y listo</li>
+<li>Dinámico: se configura autónomamente y se adapta a cambios en la topología de
+la red.</li>
+</ul>
+<div id="admonition-ruteo-en-modelo-osi" class="admonition admonish-info">
+<div class="admonition-title">
+<p>Ruteo en modelo OSI</p>
+<p><a class="admonition-anchor-link" href="unidad_5.html#admonition-ruteo-en-modelo-osi"></a></p>
+</div>
+<div>
+<ul>
+<li>Llamamos <strong>PDU</strong> (Protocol Data Unit)
+<ul>
+<li>A nivel 4 es un segmento</li>
+<li>A nivel 3 es un datagrama</li>
+<li>A nivel 2 es un frame</li>
+<li>el PDU es la unidad de datos relevante para cada capa. Esto contiene no
+sólo la data que viene de la capa superior/inferior, si no también el
+encapsulado hecho por la capa</li>
+</ul>
+</li>
+<li>Al nivel 3 lo conforman un par de protocolos:
+<ul>
+<li>Protocolos de ruteo
+<ul>
+<li>permite elegir caminos para los datagramas</li>
+</ul>
+</li>
+<li>Protocolo de IP
+<ul>
+<li>describe las convenciones de direccionamiento, el formato de los
+datagramas y las convenciones sobre el manejo de paquetes</li>
+</ul>
+</li>
+<li>Protocolo ICMP
+<ul>
+<li>permite reporte de errores, mandar señales entre routers entre otras
+cosas</li>
+<li>por ejemplo, las aplicacioneas <em>ping</em> y <em>traceroute</em> están basadas en
+el envío de paquetes ICMP. Ping manda un mensaje de <em>ICMP echo
+request</em> y cuando le llega al destino responde. Se repite varias
+veces y se sacan métricas. Traceroute arranca con TLL = 0 y envía el
+echo request y va aumentando el TTL de a 1, entonces cada request va
+encontrando un hop nuevo cada vez.</li>
+<li><a href="https://www.cloudflare.com/en-gb/learning/ddos/glossary/internet-control-message-protocol-icmp/">offtopic</a>:
+explicación breve de cloudfare sobre qué es el protocolo ICMP y
+algunos ataques conocidos <img src="./img/traceroute.gif#center" alt="" /></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="./img/routing_osi.png" alt="" /></p>
+</div>
+</div>
+<h3 id="tablas-de-ruteo-y-de-forwarding"><a class="header" href="#tablas-de-ruteo-y-de-forwarding">Tablas de Ruteo y de forwarding</a></h3>
+<ul>
+<li>La tabla de enrutamiento dice a qué "next hop" mandar el paquete (tiene la
+info lógica)
+<ul>
+<li>además como next hop puedo tener un default gateway (por ejemplo, en gral
+el router de nuestra casa sigue la regla de que todo lo que no esté
+dentro de la red sale al default gateway)</li>
+<li>si el dstAddr pertenece a la misma red que el router entonces ya puede
+mandar el paquete por la interface correspondiente a esa red.</li>
+</ul>
+</li>
+<li>La tabla de forwarding dice cómo mandar el paquete a un next hop (tiene la
+info física)
+<ul>
+<li>cómo se le asigna inicialmente una ip si recién me conecto? DHCP (lo
+vemos más adelante), que te provee de una IP privada para la red local.</li>
+</ul>
+</li>
+<li>el mapeo de dirección IP -&gt; dirección física se conoce mediante ARP
+(Adress Resolution Protocol)</li>
+</ul>
+<h4 id="arp"><a class="header" href="#arp">ARP</a></h4>
+<p><img src="./img/routing_forwarding_tables.png" alt="" /></p>
+<ul>
+<li>Cada router mantiene una tabla (ARP table o ARP cache)
+que mappea addrIP -&gt; addrFísica</li>
+<li>Aprox. cada 15 minutos se reinicia dicha tabla</li>
+<li>Algoritmo: si al momento de mandar no tiene el mapeo
+IP -&gt; MAC entonces broadcastea un ARP query. La query
+tiene la dirección IP. El host que recibe la query y
+matchea su dirección ip con la de la query, manda una
+respuesta que contiene la MAC.</li>
+<li>También en el ARP query se incluye la dirección del
+que emite la request lo cual hace que todos los otros
+hosts y routers que lo reciban ya conozcan la
+dirección física que le corresponde a la IP que hizo
+la query.</li>
+<li>Al igual que pasaba con las tablas de los learning
+bridges, si ya estaba en la tabla se resetea el tiempo
+límite para sacar la row de dicha tabla.</li>
+</ul>
+<h4 id="dhcp"><a class="header" href="#dhcp">DHCP</a></h4>
+<ul>
+<li>Es un método de configuración dinámica para asignar IPs a los distintos nodos
+de una red.</li>
+<li>El detalle principal es la existencia de al menos un servidor DHCP.
+<ul>
+<li>el servidor mantiene una pool de direcciones disponibles que va a ir
+administrando de forma automática.</li>
+</ul>
+</li>
+<li>Además, dado que la idea es minimizar la cantidad de configuración a realizar
+también se provee un mecanismo para que los hosts encuentren y se puedan
+comunicar con el servidor DHCP.
+<ul>
+<li>Envían un mensaje <em>DHCPDISCOVER</em> a la dirección de ip de broadcast</li>
+<li>El servidor DHCP eventualmente recibe el paquete y responde</li>
+</ul>
+</li>
+<li>Además, no siempre contamos con un servidor DHCP por red (ni siempre es
+deseable), por lo que también se cuenta con <em>relay agents</em> que su función es
+mantener la dirección IP del servidor DHCP. El relay agent se encarga de
+mandarle al servidor DHCP los mensajes <em>DHCPDISCOVER</em> que recibe.</li>
+<li>El protocolo también admite la posibilidad de que la ip se otorgue por un
+tiempo determinado. Esto permite olvidarnos de detectar nodos caídos o que se
+desconectan y facilitan el manejo y la liberación de recursos para el
+servidor.
+<ul>
+<li>Los hosts tienen la posibilidad de "renovar" dichas direcciones IP</li>
+</ul>
+</li>
+</ul>
+<h3 id="algoritmos-de-ruteo-interno"><a class="header" href="#algoritmos-de-ruteo-interno">Algoritmos de ruteo interno</a></h3>
+<p>Se clasifican en:</p>
+<ul>
+<li><strong>Distance vector</strong></li>
+<li><strong>Link state</strong></li>
+</ul>
+<p>Y estos dan lugar a los protocolos de ruteo (RIP y OSPF)</p>
+<div class="table-wrapper"><table><thead><tr><th>Cada Router</th><th>DISTANCE-VECTOR</th><th>LINK-STATE</th></tr></thead><tbody>
+<tr><td>Qué informa?</td><td>Toda su tabla de ruteo</td><td>Sólo el estado de sus enlaces directos</td></tr>
+<tr><td>A quién le pasa la info?</td><td>Sólo a sus vecinos</td><td>A toda la red (hace flooding)</td></tr>
+<tr><td>Algoritmo utilizado</td><td>Bellman-Ford distribuido</td><td>Dijkstra</td></tr>
+<tr><td>Datos utilizados</td><td>Info de sus vecinos</td><td>Estado de enlaces de cada nodo</td></tr>
+<tr><td>Estructuras de datos</td><td>Tabla de distancias y Tabla de ruteo</td><td>Tabla de Estado de Enlaces y tabla de ruteo</td></tr>
+<tr><td>Características</td><td>Ciclos de Ruteo</td><td>Visión consistente de la red</td></tr>
+<tr><td></td><td>Gran variedad de algoritmos(Merlin-Segall, Jaffe-Moss, entre otros.)</td><td>Algoritmo básico único</td></tr>
+<tr><td></td><td>Cálculo distribuido</td><td>Cálculo centralizado</td></tr>
+<tr><td></td><td></td><td>Mucho uso de CPU y Memoria</td></tr>
+<tr><td>Protocolo de Internet</td><td>RIP</td><td>OSPF</td></tr>
+</tbody></table>
+</div><div id="admonition-pequeño-recuerdo-de-bellman-ford-vs-dijstra" class="admonition admonish-info">
+<div class="admonition-title">
+<p>Pequeño recuerdo de Bellman-Ford vs Dijstra</p>
+<p><a class="admonition-anchor-link" href="unidad_5.html#admonition-pequeño-recuerdo-de-bellman-ford-vs-dijstra"></a></p>
+</div>
+<div>
+<p>Ambos algoritmos permiten construir un arbol de caminos mínimos con raíz en un
+nodo <em>v</em></p>
+<h4 id="bellman-ford"><a class="header" href="#bellman-ford">Bellman-Ford</a></h4>
+<p>Idea: construyo un arbol de caminos mínimos parcial \(T_k\) donde
+\(T_k[i]\) te dice la distancia del camino mínimo del nodo \(i\) a la raiz
+\(v\) usando a lo sumo \(k-1\) ejes, y cuál es su antecesor en ese camino.
+Eventualmente el \(T_{|V|-1}\) tiene lo que quiero.</p>
+<h4 id="dijkstra"><a class="header" href="#dijkstra">Dijkstra</a></h4>
+<p>Idea: es el algoritmo de prim de AGM pero cambiamos la función que se usa para
+definir qué nodo agregar y con qué arista. Elijo aquél nodo cuya distancia a la
+raíz se minimice con la arista agregada. O sea si tengo el subárbol generador
+\(T_k\) enraizado en \(v\), agregamos el nodo \(w\) y la arista \((u,w)\)
+que minimizan \(T_k[u] + d(u, w)\) para cada arista candidata.</p>
+</div>
+</div>
+<h3 id="rip-vector-de-distancia"><a class="header" href="#rip-vector-de-distancia">RIP (Vector de Distancia)</a></h3>
+<ul>
+<li>Cada nodo mantiene una tabla de distancias con tuplas de <code>(Dst, Cost, NextHop)</code>
+<ul>
+<li>Tiene la mejor distancia conocida a cada destino, y qué salida se usa
+para llegar ahí</li>
+</ul>
+</li>
+<li>Intercambia mensajes <strong>sólo con los vecinos directos</strong>
+<ul>
+<li>Esto ocurre periódicamente (cada ciertos segundos) o cuando su tabla
+cambia por algún trigger.</li>
+</ul>
+</li>
+<li>Cada actualización es una lista de pares <code>(Destination, Cost)</code></li>
+<li>Se modifica la tabla si se recibe una <strong>mejor ruta</strong>
+<ul>
+<li>Tiene menor costo</li>
+<li>Llegó desde el next-hop de ese destino</li>
+</ul>
+</li>
+<li>Al igual que antes, tienen un timeout bajo el cuál se limpian las entradas de la tabla</li>
+<li>Por qué se eligió Bellman-Ford distribuido en lugar de Dijkstra? Porque como
+mencionamos, dijkstra consumía más cpu y memoria y al principio no había
+tanto hardware que lo soporte (o se volvía muy caro).</li>
+</ul>
+<p>Algoritmo:</p>
+<pre><code class="language-python">def receive_table(self, router_id, routing_table):
+    for (destination, cost, next_hop) in self.routing_table:
+        if destination == self.router_id: continue
+
+        if routing_table[destination] + self.routing_table[router_id] &lt; cost:
+            self.routing_table[destination] = (routing_table[destination] + self.routing_table[router_id], router_id)
+</code></pre>
+<p>En gral el costo lo medimos en nro. de saltos y listo. Al principio que tengo
+nodos a los que no sé cómo llegar, los inicializo en infinito.</p>
+<h4 id="qué-pasa-cuando-un-enlace-falla"><a class="header" href="#qué-pasa-cuando-un-enlace-falla">Qué pasa cuando un enlace falla?</a></h4>
+<ul>
+<li>caso feliz
+<ul>
+<li>falla el enlace de F a G. F lo detecta y setea su distancia a G a
+infinito, y avisa a sus vecinos.</li>
+<li>A se entera de eso y también setea su distancia a infinito.</li>
+<li>A recibe una actualización de C con un camino a G en 2 saltos. Actualiza
+su tabla para tener distancia de 3 saltos a G y manda la info a los
+vecinos.</li>
+<li>F recibe la actualización y setea su distancia a G en 4 saltos usando A.
+<img src="./img/rip_happy_path.png" alt="" /></li>
+</ul>
+</li>
+<li>caso triste (inestable, <strong>conteo a infinito</strong>)
+<ul>
+<li>falla el enlace de A a E. A le comunica a B y a C una distancia infinito
+a E.</li>
+<li>Tanto B como C antes de recibir el update de A comunican que llegan a E con distancia 2</li>
+<li>Luego se les actualiza su distancia a infinito</li>
+<li>Luego B decide que llega en 3 saltos a E a través de C y le avisa a A</li>
+<li>A decide que llega en 4 saltos a E a través de B y le avisa a C</li>
+<li>C decide que llega en 5 saltos a E a través de A</li>
+<li>B decide que llega en 6 saltos a E a través de C</li>
+<li>y así sucesivamente...</li>
+<li>Esto está muy condicionado al timing en el que se reciben los mensajes.</li>
+</ul>
+</li>
+</ul>
+<p>Cómo lo resuelvo? Facilito: uso la heurística de que costo &gt; 16 lo setea como infinito</p>
+<h4 id="formato-del-paquete"><a class="header" href="#formato-del-paquete">Formato del paquete</a></h4>
+<ul>
+<li>Comando</li>
+<li>Version</li>
+<li>Y una lista una atraz de la otra que contienen
+<ul>
+<li>red</li>
+<li>tags</li>
+<li>prefijo de red</li>
+<li>mascara de red</li>
+<li>distancia a la red</li>
+</ul>
+</li>
+</ul>
+<p><img src="./img/rip_packet.png#center" alt="" /></p>
+<div id="admonition-sobre-qué-capa-corre-rip" class="admonition admonish-info">
+<div class="admonition-title">
+<p>Sobre qué capa corre RIP?</p>
+<p><a class="admonition-anchor-link" href="unidad_5.html#admonition-sobre-qué-capa-corre-rip"></a></p>
+</div>
+<div>
+<p>Uno podría pensar que RIP corre encapsulado sobre capa 3. Sin embargo, su
+implementación es a nivel de aplicación y corre como un daemon usando UDP. Las
+tablas de ruteo siguen en capa 3 pero el algoritmo y armado de las tablas
+corren como una aplicación más.</p>
+<p><img src="./img/rip_daemon.png#center" alt="" /></p>
+</div>
+</div>
+<h3 id="ospf---open-shortest-path-first-link-state"><a class="header" href="#ospf---open-shortest-path-first-link-state">OSPF - Open Shortest Path First (Link State)</a></h3>
+<ul>
+<li>Todos los nodos tienen la misma info
+<ul>
+<li>O sea todos conocen la topología de la red gracias al mecanismo de
+flooding (el flooding se hace dentro del sistema autónomo)</li>
+</ul>
+</li>
+<li>Calculo el camino mínimo usando Dijkstra (forward search)</li>
+<li>Algoritmo:
+<ul>
+<li>Descubro vecinos y sus direcciones de red</li>
+<li>Mido el costo para cada vecino</li>
+<li>Construyo un paquete con lo aprendido de los vecinos (Link State Packet,
+<strong>LSP</strong>)
+<ul>
+<li>ID del router que lo creó</li>
+<li>Costo del enlace a cada uno de sus vecinos</li>
+<li>Número de secuencia (SEQNO)</li>
+<li>TTL</li>
+</ul>
+</li>
+<li>Mando el paquete a <strong>todos los demás routers</strong></li>
+<li>Aplica Dijkstra y calcula la ruta más corta a todos los nodos</li>
+</ul>
+</li>
+<li>Flooding: Cada router
+<ul>
+<li>Almacena el LSP más reciente de cada nodo</li>
+<li>Decremena TTL
+<ul>
+<li>Descarta si TTL = 0</li>
+<li>Manda un LSP ACK (por eso la inundación es confiable)
+<ul>
+<li>El protocolo reenvía los LSP que recibió a todos los que no le
+mandaron el ACK (y tampoco el que le había mandado el paquete)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Reenvía LSP a todos los nodos menos el que envió el paquete recién
+recibido</li>
+<li>Genera LSP periodicamente e incrementa el SEQNO</li>
+<li>Cuando se reinicia setea <code>SEQNO = 0</code></li>
+</ul>
+</li>
+<li>En la práctica el algoritmo se maneja on the fly
+<ul>
+<li>Los registos son <code>(dstAddr, cost, next_hop)</code></li>
+<li>Para eso se manejan dos listas:
+<ul>
+<li>tentativo</li>
+<li>confirmado</li>
+<li>En cada ciclo agrego entradas a la lista de tentativos, y el de menor
+costo de todos los tentativos se pasa a confirmado. Una vez agregado
+se recomputan los de la lista de tentativos.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>A diferencia de RIP, OSPF está implementado sobre IP directamente.</li>
+</ul>
+<h4 id="ospf-jerárquico"><a class="header" href="#ospf-jerárquico">OSPF Jerárquico</a></h4>
+<ul>
+<li>Puedo dividir un sistema autónomo definiendo
+<ul>
+<li>varias "áreas" (pueden tener routers adentro)</li>
+<li>un troncal de routers (un backbone)</li>
+<li>routers de frontera de área que conectan el área con los troncales</li>
+<li>un router frontera que sale hacia otro sistema autónomo</li>
+</ul>
+</li>
+<li>El flooding se hace dentro de cada área, entonces saturo menos la red con
+mensajes y hago más escalable a OSPF respecto de RIP</li>
+</ul>
+<h4 id="mensajes-de-ospf"><a class="header" href="#mensajes-de-ospf">Mensajes de OSPF</a></h4>
+<div class="table-wrapper"><table><thead><tr><th>Tipo de Mensaje</th><th>Descripción</th></tr></thead><tbody>
+<tr><td>Hello</td><td>Sirve para descubrir los vecinos</td></tr>
+<tr><td>Link State Update</td><td>Proporciona los costos del emisor a sus vecinos</td></tr>
+<tr><td>Link State ACK</td><td>Confirma la recepción del update</td></tr>
+<tr><td>Database description</td><td>Anuncia qué actualizaciones tiene el emisor</td></tr>
+<tr><td>Link state request</td><td>Solicita información del socio</td></tr>
+</tbody></table>
+</div><div id="admonition-pregunta-de-final-alert" class="admonition admonish-note">
+<div class="admonition-title">
+<p>PREGUNTA DE FINAL ALERT</p>
+<p><a class="admonition-anchor-link" href="unidad_5.html#admonition-pregunta-de-final-alert"></a></p>
+</div>
+<div>
+<p>Por qué decimos que OSPF realiza una inundación <strong>confiable</strong>?</p>
+<ul>
+<li>Porque el flooding se hace a todos los nodos del sistema autónomo</li>
+<li>Y de cada nodo recibo el ack para asegurarme de que le llegó</li>
+</ul>
+</div>
+</div>
+<h4 id="paquete-de-ospf"><a class="header" href="#paquete-de-ospf">Paquete de OSPF</a></h4>
+<p><img src="./img/ospf_header.png" alt="" /></p>
+<p>Estoy mandando un paquete IP con el mismo formato que vimos en la unidad
+anterior, en donde el campo de protocolo lleva el valor 89 para indicar que es
+un paquete de OSPF. Además se usan algunos de los campos opcionales.</p>
+<h3 id="bgp---ruteo-interdominio"><a class="header" href="#bgp---ruteo-interdominio">BGP - Ruteo Interdominio</a></h3>
+<p>Generalidades:</p>
+<ul>
+<li>Diseñado para una red estructurada como árbol.</li>
+<li>Prioriza <strong>alcanzar nodos</strong>, no optimiza rutas.</li>
+</ul>
+<p>Y para lograrlo usa los mensajes:</p>
+<ul>
+<li>Adequisición de vecinos: Pide a un router vecino ser su par, y los routers pares intercambian información de alcance.</li>
+<li>Alcance de vecinos: mediante mensajes de <em>HELLO</em> y <em>ACK</em> chequean periódicamente que sus vecinos sigan siendo alcanzables.</li>
+<li>Actualización de rutas: los routers intercambian periódicamente sus tablas de
+ruteo.</li>
+</ul>
+<p>BGP resuelve el problema de evitar que los sistemas autónomos tengan que compartir info de alcanzabilidad entre ellos, manteniendo:</p>
+<ul>
+<li>cuáles rangos de direcciones IP se alcanzan en cada AS</li>
+<li>por qué ruta se puede llegar de un AS <em>A</em> a un AS <em>B</em></li>
+</ul>
+<p><img src="./img/bgp.png" alt="" /></p>
+<p>En este ejemplo podemos suponer que cada regional provider es un proveedor
+(léase telecom, telefónica, etc.). Para llegar a USA, cómo hace Telecom? Va a
+tener que pasar por el backbone, supongamos que es At&amp;t, que es un proveedor de
+tier 1. Entonces, ese proveedor de tier 1 te va a cobrar por el servicio (que
+sería publicar las rutas al resto del mundo, y además por cuánta data pasás).</p>
+<p>Ahora, originalmente (~año 2000) el tráfico de acá se tenía que ir hasta USA
+para volver a los servidores de acá. Se puede evitar eso? Surgen los NAP
+(Network Access Point) o IX (Internet eXchanges).</p>
+<ul>
+<li>En Argentina tenemos la CABASE (Cámara Argentina de Internet)</li>
+<li>Tienen uno o varios routers gigantes que interconectan varios ISPs locales.</li>
+<li>2 beneficios, menos RTT y menor costo para el tráfico internacional</li>
+</ul>
+<p>Hoy en día, el tráfico internacional es bastante bajo porque el contenido está
+almacenado localmente bajo CDNs (Content Distribution Networks).</p>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="unidad-6---nivel-de-transporte"><a class="header" href="#unidad-6---nivel-de-transporte">Unidad 6 - Nivel de Transporte</a></h1>
+<div id="admonition-something-something-quic" class="admonition admonish-info">
+<div class="admonition-title">
+<p>Something Something Quic</p>
+<p><a class="admonition-anchor-link" href="unidad_6.html#admonition-something-something-quic"></a></p>
+</div>
+<div>
+<p>Hace poco (2021) salió el standard para Quic, creado por Google que intenta ser un sucesor de TCP implementado sobre UDP:</p>
+<iframe width="560" height="315" src="https://www.youtube.com/watch?v=0B00TQ14faw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
+</div>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="unidad-7---el-problema-de-congestión"><a class="header" href="#unidad-7---el-problema-de-congestión">Unidad 7 - El problema de Congestión</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="unidad-8---nivel-de-aplicación"><a class="header" href="#unidad-8---nivel-de-aplicación">Unidad 8 - Nivel de Aplicación</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="unidad-9---seguridad"><a class="header" href="#unidad-9---seguridad">Unidad 9 - Seguridad</a></h1>

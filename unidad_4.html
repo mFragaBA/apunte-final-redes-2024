@@ -178,6 +178,250 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="unidad-4---nivel-de-red"><a class="header" href="#unidad-4---nivel-de-red">Unidad 4 - Nivel de Red</a></h1>
+<p><img src="./img/osi_isp.png#center" alt="" /></p>
+<p>Retomando el modelo OSI, podemos ver que de capa 3 para abajo tenemos lo que se
+llama el <strong>límite de subred de comunicación</strong>, que delimita las capas sobre las
+que operan los isp.</p>
+<h2 id="redes-escalables-con-switches"><a class="header" href="#redes-escalables-con-switches">Redes escalables... con switches</a></h2>
+<p>Peterson afirma que internet es una red <strong>escalable</strong>. Por escalable vamos a
+entender como aquello que cuando crece, el costo de su
+mantenimiento/administración es mínimo. Internet no solo es escalable, es
+<strong>altamente escalable</strong>.</p>
+<p>Cómo se logra eso? Principalmente mediante <strong>routers/switches</strong>. Su objetivo
+principal es conmutar o forwardear paquetes. Dependiendo el tipo de switch, van
+a distribuir paquetes mediante:</p>
+<ul>
+<li><strong>circuitos virtuales</strong></li>
+<li><strong>conmutación de datagramas</strong></li>
+</ul>
+<p>Notar que ambos pertenecen al paradigma de conmutación de paquetes, pero
+también existe lo que antes se usaba que era la conmutación de circuitos.</p>
+<h3 id="conmutación-de-paquetes"><a class="header" href="#conmutación-de-paquetes">Conmutación de paquetes</a></h3>
+<p>Tenemos 2 paradigmas (que usan una u otra forma de distribuir paquetes):</p>
+<ul>
+<li>Orientado a conexión (circuitos virtuales): acá también mando varios
+paquetes, pero el camino es fijo. <img src="./img/virtual_circuits.png" alt="" />
+<ul>
+<li>necesito "alguna magia" que arme toda la ruta</li>
+<li>le decimos "orientado a conexión" porque previamente establezco una
+comunicación entre ambos hosts.</li>
+<li>tengo 3 fases:
+<ul>
+<li>establecer conexión</li>
+<li>mandar datos</li>
+<li>levantar la conexión</li>
+</ul>
+</li>
+<li>llegan en orden</li>
+</ul>
+</li>
+<li>Sin conexión (datagramas IP): parto la info a mandar en datagramas (cachitos
+de info) y la mando, cada uno puede tomar una ruta a destino distinta y
+podrían llegar desordenados. <img src="./img/datagrams.png" alt="" />
+<ul>
+<li><strong>no existe una fase para establecer una conexión</strong></li>
+<li>como cada paquete se envía de forma independiente, tiene que ser
+autosuficiente. O sea necesita dir fuente y dir destino (cof cof IP)</li>
+</ul>
+</li>
+</ul>
+<p>Si bien circuitos virtuales estaba medio muerto, con la tecnología 5G tuvo un
+renacimiento, aunque se lo llama <strong>slicing</strong></p>
+<h4 id="conmutación-sin-conexión"><a class="header" href="#conmutación-sin-conexión">Conmutación sin conexión</a></h4>
+<ul>
+<li>cada switch mantiene una tabla de forwarding
+<ul>
+<li>uso un <strong>algoritmo de ruteo</strong> para armarla</li>
+</ul>
+</li>
+<li>la tabla me dice a dónde mandar un paquete en base a la dirección destino.</li>
+<li>tuvo que haber un algoritmo de seteo inicial para armar esas tablas</li>
+</ul>
+<p><img src="./img/datagram_routing_scheme.png" alt="" /></p>
+<h4 id="conmutación-orientada-a-conexión--circuitos-virtuales"><a class="header" href="#conmutación-orientada-a-conexión--circuitos-virtuales">Conmutación orientada a conexión / Circuitos virtuales</a></h4>
+<ul>
+<li>al igual que datagramas se arma una tabla pero una <strong>tabla de circuitos
+virtuales</strong> (no vamos a estudiar cómo). La misma tiene:
+<ul>
+<li>Puerto por donde llega un paquete</li>
+<li>VCI (id del circuito) de entrada</li>
+<li>puerto de salida del paquete</li>
+<li>id del VCI de salida</li>
+</ul>
+</li>
+<li>cómo armo la tabla de circuitos? cómo armo los VCI?</li>
+<li>cómo sé dónde está cada nodo?</li>
+<li>Tengo 2 tipos:
+<ul>
+<li>permanente (la define el administrador)
+<ul>
+<li>se tiene que configurar y recién ahí puedo proceder a mandar datos</li>
+</ul>
+</li>
+<li>por solicitud o conmutado
+<ul>
+<li>se mandan mensajes de solicitud de conexión a la red</li>
+<li>se arma una cadena de switches que llevan hasta el host destino que
+tienen que aceptar la conexión y propagar la solicitud al siguiente
+switch / nodo.</li>
+<li>una vez construido el circuito virtual se empiezan a enviar datos</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>Cuál sería algún incentivo para preferir circuitos virtuales? Al establecer la
+conexión uno puede "reservar" recursos (léase ancho de banda, buffers, etc.)
+puedo garantizar cierta calidad de servicio y mejor control de congestión.</p>
+<h4 id="modelo-de-datagrama-vs-circuitos"><a class="header" href="#modelo-de-datagrama-vs-circuitos">Modelo de Datagrama vs Circuitos</a></h4>
+<p>Datagrama:</p>
+<ul>
+<li>No hace falta esperar a un RTT para establecer una conexión</li>
+<li>Inmediatamente disponible para mandar datos</li>
+<li>Envío paquete sin establecer conexión</li>
+<li>Estadísticamente los datagramas llegan en orden</li>
+<li>Hago mi mejor esfuerzo para rutear el paquete en la red</li>
+</ul>
+<p>Circuitos Virtuales:</p>
+<ul>
+<li>Necesito fase inicial para establecer una conexión y una final para
+liberarla, que no transportan datos del usuario
+<ul>
+<li>tengo algo de overhead</li>
+</ul>
+</li>
+<li>Una vez establecido el circuito se usa siempre eso para mandar (no es adaptable a fallas/congestión)</li>
+</ul>
+<p>Ahora, una vez establecida la conexión los circuitos virtuales funcionan mucho
+mejor. Por qué entonces ganó datagramas.</p>
+<ul>
+<li>Circuitos virtuales requería más infraestructura del lado del ISP
+<ul>
+<li>Eso también permitía ser más exigentes con el costo del servicio (ej: te
+cobro por cada paquete transmitido)</li>
+<li>Al ser más complejo es también menos escalable</li>
+</ul>
+</li>
+<li>Si bien con datagramas la comunicación es "boba", eventualmente se armaron
+protocolos que permiten resolver algunos de los problemas que circuitos
+virtuales resolvía mediante infra, pero con software (esa solución es la que
+conocemos como TCP).</li>
+</ul>
+<div id="admonition-conmutación-de-circuitos-vs-conmutación-de-paquetes" class="admonition admonish-note">
+<div class="admonition-title">
+<p>Conmutación de circuitos vs. Conmutación de paquetes</p>
+<p><a class="admonition-anchor-link" href="#admonition-conmutación-de-circuitos-vs-conmutación-de-paquetes"></a></p>
+</div>
+<div>
+<p>Algo en lo que se hizo mucho incapié es en el hecho de que podemos llegar a
+confundir circuitos virtuales con conmutación de circuitos, y que por ende
+ambos operan en capas 1, 2 y 3. Sin embargo, recordemos que conmutación de
+circuitos refiere a lo visto para la unidad 0 y aplica únicamente a capa 1
+(física).</p>
+</div>
+</div>
+<h3 id="ip-en-internet"><a class="header" href="#ip-en-internet">IP en Internet</a></h3>
+<ul>
+<li>Permito interconexión de redes</li>
+<li>A priori puedo tener distintos tipos de conexiones a lo largo del camino que
+toma el paquete, pero el "glue code" viene a ser ip: <img src="./img/ip_stack.png" alt="" /></li>
+<li>IP <strong>ES SENCILLO</strong>
+<ul>
+<li>El formato fundamentalmente es agregar dos campos, hay más cosas pero el
+core son los campos de dirección fuente y destino</li>
+</ul>
+</li>
+</ul>
+<h3 id="campos-del-header-ip-versión-4"><a class="header" href="#campos-del-header-ip-versión-4">Campos del header IP (versión 4)</a></h3>
+<ul>
+<li>Header de 20bytes con 40 bytes extra para campos opcionales</li>
+<li>Los campos
+<ul>
+<li><em>Versión</em>: para tener versiones coexistiendo</li>
+<li><em>Longitud del header</em>: ya que puede crecer por los opcionales</li>
+<li><em>DiffServ/ECN</em>: permite dar prioridad a cierto tráfico (ej: puedo
+configurar los routers de mi red para que prioricen al ECN específico)</li>
+<li><em>Longitud total</em>: en bytes e incluyendo el header</li>
+<li><em>Fragmentación</em>: Ta compuesto por varios sub-campos: Identificación, bit
+de No fragmentar (DF), bit de más fragmentar (MF) y un bit de
+desplazamiento.
+<ul>
+<li>No todas las tecnologías de acceso al medio tiene el mismo tamaño de
+trama. Entonces IP necesita un mecanismo de fragmentación para pasar
+por distintos tipos de redes con distintas tecnologías de acceso al
+medio.</li>
+</ul>
+</li>
+<li><em>TTL</em>: es un contador que se decrementa con cada salto entre routers. Si
+llega a 0 se descarta el paquete.</li>
+<li><em>Checksum</em>: sólo del header, no de los datos (TCP es el único que hace
+correción de errores)</li>
+<li><em>Dirección fuente y destino</em>: de 32 bits</li>
+<li><em>Protocolo</em>: un identificador que le permite al router saber qué lleva el paquete IP
+<img src="./img/ip_protocol_field.png" alt="" /></li>
+</ul>
+</li>
+</ul>
+<h4 id="fragmentación-y-re-ensamblado"><a class="header" href="#fragmentación-y-re-ensamblado">Fragmentación y re-ensamblado</a></h4>
+<ul>
+<li>Cada tecnología de acceso al medio tiene (a nivel de enlace), un <strong>MTU</strong>
+(Maximum Transmission Unit)
+<ul>
+<li>ej: en Ethernet son 1500 bytes, en FDDI 4500 bytes</li>
+</ul>
+</li>
+<li>Entonces, IP se adapta a la tecnología de enlace
+<ul>
+<li>Si recibo un datagrama y MTU &lt; |Datagrama|, lo tengo que partir en
+fragmentos o <strong>fragmentar</strong> y el host destino los <strong>reensabla</strong></li>
+<li>Los fragmentos llevan un identificador cosa de saber cuáles corresponden
+a un mismo datagrama</li>
+<li>Además contienen:
+<ul>
+<li>un offset para poder ordenarlos</li>
+<li>un bit para marcar el último fragmento</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Hoy en día, estadísticamente, la fragmentación es mínima (si tenés mucha
+fragmentación puede que te estén hackeando).</li>
+</ul>
+<h3 id="direccionamiento-global"><a class="header" href="#direccionamiento-global">Direccionamiento Global</a></h3>
+<ul>
+<li>Se pensó una organización <strong>jerárquica</strong>
+<ul>
+<li>Una dirección compuesta por red + host</li>
+</ul>
+</li>
+<li>Las direcciones son "globalmente únicas"</li>
+<li>Esquema de clases <em>A</em>, <em>B</em> y <em>C</em>
+<ul>
+<li>las clases más altas pueden tener más hosts</li>
+</ul>
+</li>
+</ul>
+<h3 id="forwarding-de-ip"><a class="header" href="#forwarding-de-ip">Forwarding de IP</a></h3>
+<p>Cómo hacen los routers para saber a dónde mandar un datagrama?</p>
+<ul>
+<li>El datagrama recordemos tiene la dirección destino</li>
+<li>Si el router está en dicha dirección destino, entonces hace el forward al
+host</li>
+<li>Si no está conectado directamente a esa red, tiene que hacer un forward a
+otro router que lo elige en base a su <strong>tabla de forwarding</strong>
+<ul>
+<li>mapea una dirección de red al <em>next hop</em></li>
+</ul>
+</li>
+<li>Además cada host tiene un default router</li>
+</ul>
+<h3 id="ipv6"><a class="header" href="#ipv6">IPV6</a></h3>
+<ul>
+<li>Se definió en la década del 90'.</li>
+<li>El número de dispositivos totales que soportaba IPv4 admitía ~4300 millones de direcciones.</li>
+<li>En su momento no se pensaba que ibamos a quedarnos sin direcciones pero hoy en día ya es una realidad.</li>
+<li>Usa 128 bits de direccionamiento en lugar de sólo 32 bits</li>
+</ul>
 
                     </main>
 
