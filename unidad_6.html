@@ -178,6 +178,298 @@
                 <div id="content" class="content">
                     <main>
                         <h1 id="unidad-6---nivel-de-transporte"><a class="header" href="#unidad-6---nivel-de-transporte">Unidad 6 - Nivel de Transporte</a></h1>
+<ul>
+<li>Llegamos a los primeros protocolos end-to-end, del nivel de transporte en
+OSI.</li>
+<li>El PDU en este nivel es el <strong>segmento</strong>.</li>
+<li>A diferencia del nivel de enlace, el nivel de transporte no puede tener
+conocimiento del delay (a priori).</li>
+<li>Además tiene que lidiar con la congestión de la red</li>
+<li>El modelo OSI normalmente piensa en el nivel de transporte como un modelo de
+cliente-servidor.
+<ul>
+<li>Lo representamos con una máquina de estados (el diagrama en realidad es
+el de TP4 pero está basado en TCP) <img src="./img/tp4_tcp.png" alt="" /></li>
+</ul>
+</li>
+<li>TP4 es un protocolo basado en conexión</li>
+<li>Ojo igual, no todos los protocolos son basados en conexión. Por ejemplo, UDP
+es un servicio sin conexión y por lo tanto no tiene necesidad de mantener
+toda esta máquina de estados.</li>
+</ul>
+<h2 id="protocolos-end-to-end-en-subredes-de-datagramas"><a class="header" href="#protocolos-end-to-end-en-subredes-de-datagramas">Protocolos end-to-end en subredes de datagramas</a></h2>
+<ul>
+<li>Los servicios de la capa de red son best-effort
+<ul>
+<li>se descartan mensajes,</li>
+<li>pueden llegar desordenados</li>
+<li>pueden haber duplicados</li>
+<li>los mensajes tienen tamaño limitado</li>
+<li>no hay un límite de tiempo para entregar mensajes</li>
+</ul>
+</li>
+<li>Es por esto en parte que los protocolos end-to-end intentan proveer algunos
+de los siguientes servicios:
+<ul>
+<li>garantía de entrega de mensajes</li>
+<li>persistencia del orden</li>
+<li>entrega de a lo sumo una copia de cada mensaje</li>
+<li>soporte para mensajes arbitrariamente largos</li>
+<li>soporte de sincronización (para los servicios con conexión)</li>
+<li>permitir al receptor controlar el flujo de datos del transmisor</li>
+<li>soportar varias aplicaciones al mismo tiempo en un mismo receptor</li>
+</ul>
+</li>
+</ul>
+<h2 id="tcp"><a class="header" href="#tcp">TCP</a></h2>
+<p>Idea:</p>
+<ul>
+<li>2 Procesos: Cliente y Servidor</li>
+<li>Uno escribe bytes en un puerto/socket</li>
+<li>Hay un software tcp que tiene un buffer que almacena segmentos</li>
+<li>Y se van mandando esos segmentos por la red (TCP entiende de segmentos pero
+la aplicación <strong>manda y recibe bytes</strong>)</li>
+<li>Full duplex (en ambos sentidos)
+<ul>
+<li>Tengo control de flujo: para que el Tx no inunde al Rx (ej: mandar
+mensajes de "buffer lleno" para no overflowearlo)</li>
+<li>Tengo control de congestión: para que el Tx no sobrecargue a la red</li>
+</ul>
+</li>
+</ul>
+<p>Algunas características:</p>
+<ul>
+<li>Orientado a conexión
+<ul>
+<li>Manejo de la conexión
+<ul>
+<li>3 way handshake para establecer la conexión</li>
+<li>2-2 o 4-way handshake para la liberación de la conexión</li>
+</ul>
+</li>
+<li>Provee un servicio de flujo de bytes (stream-of-bytes)</li>
+</ul>
+</li>
+<li>Es <strong>confiable</strong> ya que tengo:
+<ul>
+<li>ACKs</li>
+<li>Checksums</li>
+<li>Números de secuencia para detectar datos perdidos / desordenados</li>
+<li>Timeout para retransmitir datos</li>
+<li>Se pueden reordenar los datos desordenados</li>
+<li>Implementa <strong>Control de flujo</strong> para no inundar al receptor</li>
+</ul>
+</li>
+</ul>
+<h3 id="mms-maximum-segment-size"><a class="header" href="#mms-maximum-segment-size">MMS: "Maximum Segment Size"</a></h3>
+<p>El segmento de tcp consiste de un header de al menos 20 bytes y la data que
+está limitada al MMS (Maximum Segment Size, 536 bytes por default). Otra vez
+podemos apreciar que el segmento tcp va a encapsularse en un paquete IP que a
+su vez se encapsula en uno o más frames de ethernet.</p>
+<p><img src="./img/tcp_segment.png#center" alt="" /></p>
+<h3 id="formato-del-segmento"><a class="header" href="#formato-del-segmento">Formato del segmento</a></h3>
+<p><img src="./img/tcp_segment_header.png#center" alt="" /></p>
+<ul>
+<li>Tengo puerto destino y fuente</li>
+<li>Tengo campo de datos</li>
+<li>Tengo nro. de secuencia</li>
+<li>Nro de ACK</li>
+<li>Flags</li>
+<li>Aviso de ventana</li>
+<li>Longitud del Header</li>
+<li>Checksum
+<ul>
+<li>se calcula de forma "extraña": toma la data del segmento TCP + la
+dirección fuente y destino de IP (se aplica a nivel 4 y toma algún dato
+de la capa 3 también)</li>
+</ul>
+</li>
+<li>Campos opcionales</li>
+<li>Un par más</li>
+</ul>
+<p>Algunos detalles:</p>
+<ul>
+<li>los puertos son de 16 bits
+<ul>
+<li>las aplicaciones escuchan sobre algún puerto</li>
+</ul>
+</li>
+<li>nro de secuencia de 32 bits. Identifica <strong>el primer byte de datos</strong></li>
+<li>nro de ACK también de 32 bits. Identifica <strong>el siguiente byte que espera el
+receptor</strong>
+<ul>
+<li>implica que llegó ese y todos los anteriores</li>
+</ul>
+</li>
+<li>la longitud del header es de 4 bits y se mide en cantidad de palabras de 32
+bits (necesitamos el campo porque hay campos de longitud variable).</li>
+<li>El aviso de ventana indica cuántos bytes pueden ser enviados a partir del
+último byte reconocido, permite evitar overflow en el buffer del receptor.</li>
+</ul>
+<h3 id="conexión-tcp"><a class="header" href="#conexión-tcp">Conexión TCP</a></h3>
+<ul>
+<li>Cada conexión se identifica con una 4-tupla <code>(srcPort, srcIPAddr, dstPort, dstIPAddr)</code></li>
+<li>Usa un mecanismo de ventana deslizante + Control de Flujo
+<ul>
+<li>Mando con seqNum</li>
+<li>hago el ack con seqNum + advertisedWindow</li>
+</ul>
+</li>
+<li>Hay 5 flags: <code>SYN</code>, <code>FIN</code>, <code>RESET</code>, <code>PUSH</code>, <code>URG</code>, <code>ACK</code>
+<ul>
+<li><code>ACK = 1</code> se usa para marcar que estoy acknowledgeando algo (no se usa
+para el setup y teardown de la conexión, si no mas bien para la recepción
+de los datos)</li>
+<li><code>RST</code> se usa para reiniciar una conexión</li>
+<li><code>SYN</code> se usa para establecer la conexión, tanto para solicitar la
+conexión como para avisar que fue aceptado el pedido.</li>
+<li><code>FIN</code> se usa para liberar la conexión (especifica que el emisor no va a transmitir más datos).</li>
+</ul>
+</li>
+</ul>
+<p>Establecimiento de conexión:</p>
+<p><img src="./img/three_way_handshake.png" alt="" /></p>
+<p>Por qué hago el último ACK e incurrir en ese overhead? Para "resolver" <a href="https://stackoverflow.com/questions/36352236/two-general-agreement-and-tcp-handshake">el problema de los generales bizantinos</a></p>
+<p>Liberación:</p>
+<p><img src="./img/tcp_fin.png" alt="" /></p>
+<p>Acá hago lo mismo para "asegurarme" que ambos liberaron sus recursos.</p>
+<h3 id="tcp-ventana-deslizante"><a class="header" href="#tcp-ventana-deslizante">TCP: Ventana Deslizante</a></h3>
+<p><img src="./img/tcp_sliding_window.png#center" alt="" /></p>
+<ul>
+<li>Para el receptor es todo igual salvo por el hecho de que el tamaño de la
+ventana lo decide él mismo en base al espacio que le queda en su buffer</li>
+<li>Y tanto para el emisor como el receptor tienen que atajarse al caso de
+paquetes desordenados
+<ul>
+<li>El emisor mantiene 3 punteros: <code>LastByteAcked</code>, <code>LastByteSent</code> y <code>LastByteWritten</code>
+<ul>
+<li>A la derecha de <code>LastByteSent</code> tengo bytes generados pero no enviados</li>
+</ul>
+</li>
+<li>El receptor mantiene <code>LastByteRead</code> (por la aplicación), <code>NextByteExpected</code>, <code>LastByteRcvd</code>. Entre <code>NextByteExpected</code> y  <code>LastByteRcvd</code> pueden haber baches.
+<ul>
+<li>La aplicación sólo puede leer un byte si todos los anteriores fueron recibido</li>
+<li><code>AdvertisedWindow = MaxRcvBuffer - (LastByteRcvd - NextByteRead)</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p><img src="./img/advertised_window_example.png#center" alt="" /></p>
+<h3 id="tcp-retransmisión-adaptativa"><a class="header" href="#tcp-retransmisión-adaptativa">TCP: Retransmisión Adaptativa</a></h3>
+<div id="admonition-tema-de-final-alert" class="admonition admonish-warning">
+<div class="admonition-title">
+<p>Tema de Final ALERT</p>
+<p><a class="admonition-anchor-link" href="#admonition-tema-de-final-alert"></a></p>
+</div>
+<div>
+</div>
+</div>
+<p>Cuando trabajabamos con la capa 2, podíamos calcular el timeout de
+retransmisión porque asumíamos varias cosas (ej: distancia acotada). Pero acá,
+puedo saber eso? A priori no. Porque no conozco el delay.</p>
+<p>En 1988 Jacobson propone un mecanismo de control de congestión bajo el título
+de <em>A fast algorithm for rtt mean and variation</em>.</p>
+<p>Idea:</p>
+<ul>
+<li>Defino un timeout de retransmisión <strong>adaptativo</strong>, eso quiere decir que varía
+en función del estado de la red (esta idea está basada en los conceptos de
+<strong>lazo cerrado y teoría de control</strong>)</li>
+<li>En capa 2 la función de densidad del RTT de ACK tiene poca varianza mientras
+que en TCP tiene mucha.</li>
+<li>Algoritmo original:
+<ul>
+<li>Mide <code>SampleRTTi</code> para cada par segmento / ACK</li>
+<li>Calcula el promedio ponderado de RTT <code>EstimatedRTT_i+1 = alpha * EstimatedRTT_i + beta * SampleRTT_i+1</code>
+<ul>
+<li>alpha + beta = 1</li>
+<li>alpha entre 0.8 y 0.9</li>
+<li>beta entre 0.1 y 0.2</li>
+<li>es un blend entre el RTT estimado y el sampleado</li>
+</ul>
+</li>
+<li>Luego, <code>TimeOut =  2 * EstimatedRTT</code></li>
+</ul>
+</li>
+<li>Pregunta: por qué me tomo todo este trabajo y no hago <code>TimeOut = SampleRTT_i-1</code>
+<ul>
+<li>porque no queda estable
+<ul>
+<li>es preferible algo suavizado para no ser suceptible a cambios muy
+bruscos en la red.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Variante algoritmo de Karn/Partridge [KP87]
+<ul>
+<li>Problema: en realidad son 2:
+<ul>
+<li>Tengo que retransmitir, y calculo el RTT en base a la transmisión
+original vs cuando me llega el ack en la retransmisión</li>
+<li>Se cumple el Timeout, se re-envía e inmediatamente después llega el
+ACK. El SampleRTT queda chico.</li>
+</ul>
+</li>
+<li>Heurística: cuando hay retransmisión ignoro el RTT, si hay retransmisión
+no lo estimo y duplico el último timeout conocido.</li>
+</ul>
+</li>
+<li>Variante bis de Jacobson / Karels: usan un cálculo que considere la varianza
+<ul>
+<li><code>Diff = SampleRTT_i - EstRTT_i+1</code></li>
+<li><code>EstRTT_i+1 = EstRTT_i + (delta * Diff)</code></li>
+<li><code>Dev = Dev + sigma * (|Diff| - Dev)</code>
+<ul>
+<li>Sigma es un factor entre 0 y 1</li>
+</ul>
+</li>
+<li><code>Timeout = mu * EstRTT + phi * Dev</code>
+<ul>
+<li>donde <code>mu = 1</code> y <code>phi = 4</code></li>
+</ul>
+</li>
+<li>Timeout se acerca a <code>EstRTT</code> o a <code>Dev</code> dependiendo del valor dinámico de la varianza</li>
+</ul>
+</li>
+</ul>
+<p><img src="./img/karn_partridge.png#center" alt="" /></p>
+<h3 id="tcp---sliding-window"><a class="header" href="#tcp---sliding-window">TCP - Sliding Window</a></h3>
+<p>En capa 2 buscamos que el window size sea tal que estoy enviando durante todo
+el RTT. Pero acá puede no pasar, y esto limita el throughput:</p>
+<p><img src="./img/tcp_adaptative_window.png" alt="" /></p>
+<p><code>MaxThroughput = WindowSize / RTT</code></p>
+<p>TLDR: quiero siempre el "caño" lleno.</p>
+<p>Ahora supongamos que tengo un <code>AdvertisedWindow</code> de 16 bits (o sea puedo mandar
+hasta 64KB). Pero si tengo alguna tecnología razonable, el delay multiplicado
+por el ancho de banda me va dando más y por ende se me hace cada vez más grande
+ese espacio desaprovechado.</p>
+<p>Para esto tengo un campo en las opciones del header que determina que el aviso
+de ventana es en KBs en lugar de bytes.</p>
+<h2 id="udp---servicio-sin-conexión"><a class="header" href="#udp---servicio-sin-conexión">UDP - Servicio Sin conexión</a></h2>
+<ul>
+<li>Tiene un header simple:
+<ul>
+<li>Puerto origen</li>
+<li>Puerto destino</li>
+<li>Longitud UDP</li>
+<li>Checksum UDP (únicamente del header)</li>
+</ul>
+</li>
+<li>El número de puerto de origen permite la <strong>multiplexación de procesos</strong>
+<ul>
+<li>nro de puerto + dirección IP = Socket</li>
+<li>Notar que esto también ocurre en TCP, pero no es una feature muy
+destacable para ese protocolo.</li>
+</ul>
+</li>
+<li>En general, se monta RTP (Real Time Protocol) sobre UDP
+<ul>
+<li>Pero Netflix Opera corre sobre TCP via HTTP</li>
+</ul>
+</li>
+</ul>
+<h2 id="miscelaneous"><a class="header" href="#miscelaneous">Miscelaneous</a></h2>
 <div id="admonition-something-something-quic" class="admonition admonish-info">
 <div class="admonition-title">
 <p>Something Something Quic</p>
@@ -185,7 +477,7 @@
 </div>
 <div>
 <p>Hace poco (2021) salió el standard para Quic, creado por Google que intenta ser un sucesor de TCP implementado sobre UDP:</p>
-<iframe width="560" height="315" src="https://www.youtube.com/watch?v=0B00TQ14faw" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.youtube.com/embed/0B00TQ14faw?si=gy8gov_4CRVSvYAs&amp;start=609" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
 </div>
 </div>
 
