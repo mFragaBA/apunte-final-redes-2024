@@ -8,3 +8,6 @@ Libro complementario que no vimos en la materia pero me pareció didáctico:
 
 - [How The internet really works - An Illustrated Guide to protocols, privacy, censorship, and governance](https://catnip.article19.org/)
 
+## Miscelaneous
+
+- [why the internet only just works - Fermat's Library](https://fermatslibrary.com/s/why-the-internet-only-just-works)
