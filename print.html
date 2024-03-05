@@ -2430,6 +2430,337 @@ destacable para ese protocolo.</li>
 </div>
 </div>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="unidad-7---el-problema-de-congestión"><a class="header" href="#unidad-7---el-problema-de-congestión">Unidad 7 - El problema de Congestión</a></h1>
+<div id="admonition-but-why-tho" class="admonition admonish-info">
+<div class="admonition-title">
+<p>But why tho?</p>
+<p><a class="admonition-anchor-link" href="unidad_7.html#admonition-but-why-tho"></a></p>
+</div>
+<div>
+<p>Inicialmente, Internet no tenía control de congestión. En el 84' ya se había
+identificado la congestión como un potencial problema, sin embargo no fue hasta
+el 86' que ocurrió un evento de congestión masivo por el cual la velocidad bajó
+de 42kbps a 40bps, una reducción del 1000%!</p>
+</div>
+</div>
+<p>Pensemos a nivel red hogareña, en donde tenemos varios dispositivos conectados
+a la misma red, y todos salen por el mismo gateway (o router). Todos esos
+dispositivos están constantemente compitiendo por recursos, un ejemplo sería el
+buffer. Esto es lo que llamamos <strong>multiplexación estadística</strong> (es una
+obviedad, pero no es únicamente el buffer de casa el que nos interesa. Esa
+misma situación se puede dar en cualquier otro router).</p>
+<ul>
+<li>Cuando el buffer se llena, el router empieza a droppear paquetes</li>
+<li>La congestión de todos modos es algo inevitable y nuestro mejor objetivo es
+el de <strong>controlarlo</strong>, no eliminarlo.</li>
+<li>Por qué no mejor evitarlo? Puedo conseguir routers con mayor buffer y listo.
+El problema de eso es que a partir de cierto punto deja de ser rentable,
+porque capaz en promedio no tenés mucha carga y el problema es que cada tanto
+tenés picos de tráfico. Algo similar aplica a las autopistas, no las hago más
+grandes porque sale caro y no es rentable.</li>
+</ul>
+<h2 id="administración-de-buffers"><a class="header" href="#administración-de-buffers">Administración de buffers</a></h2>
+<ul>
+<li>El Tanembaum hace referencia a congestión como algo global (que no es algo de
+un punto) de la red</li>
+<li>Pero nosotros consideramos tanto lo puntual como lo global. Tiene sentido
+considerar lo puntual:</li>
+</ul>
+<p><img src="./img/individual_buffer.png#center" alt="" /></p>
+<ul>
+<li>Si el buffer se llena =&gt; aumenta el delay</li>
+<li>Un buffer más grande puede llenarse más. Pero tengo que considerar que puede
+aumentar el tiempo de procesamiento (aunque evito perder paquetes).</li>
+</ul>
+<p><strong>Definición</strong>: la <strong>congestión</strong> es un estado de sobrecarga sostenida en la cual:</p>
+<ul>
+<li>Tengo al límite la disponibilidad de enlaces o de buffers</li>
+<li>Es observable porque se degrada el QoS</li>
+</ul>
+<h3 id="soluciones"><a class="header" href="#soluciones">Soluciones?</a></h3>
+<ul>
+<li>Sobredimensiono</li>
+<li>Diseño cuidadosamente</li>
+<li>Hago un control proactivo para evitar la congestión</li>
+</ul>
+<p>La solución es una suma de estas tres. En particular con el control proactivo
+nos referimos a <strong>decrementar la carga</strong>. Quién decrementa la carga? Un
+mecanismo de TCP llamado <em>control de congestión</em>.</p>
+<h2 id="análisis-de-congestión"><a class="header" href="#análisis-de-congestión">Análisis de Congestión</a></h2>
+<p><em>Teoría de colas</em>: disciplina matemática que explica el funcionamiento de las
+colas y a problemas relacionados.</p>
+<h3 id="sistema-mm1"><a class="header" href="#sistema-mm1">Sistema M/M/1</a></h3>
+<p>Es un sistema cola-servidor (el servidor es el que se encarga de ir procesando
+los paquetes encolados), en el cual el número de llegadas de paquetes es
+markoviano (es un proceso de Poisson) y el tiempo de servicio (o sea el tiempo
+que toma procesar un paquete) también es un Markoviano (en este caso un proceso
+Exponencial) y donde asumimos que la cola tiene capacidad infinita. Llamamos
+\(\lambda\) a la tasa de entrada y \(\mu\) a la tasa de servicio.</p>
+<p><img src="./img/mm1_queue.png#center" alt="" /></p>
+<p>Dado el tipo de esas variables aleatorias sabemos que \(\frac{1}{\lambda}\)
+es el tiempo medio entre llegadas y \(\frac{1}{\mu}\) el tiempo medio de
+servicio. Y definimos \(\rho = \frac{\lambda}{\mu}\) a la <strong>intensidad del
+sistema</strong> Siempre que \(\rho &gt; 1\) el sistema eventualmente se desborda, o
+sea que hay congestión (es razonable ya que no llegamos a atender a tiempo los
+pedidos).</p>
+<p>Usando una representación de Markov, se puede llegar a que \(E(N)\), la
+esperanza de la ocupación del buffer y \(E(T)\), el tiempo de espera en el
+sistema hasta ser procesado son:</p>
+<p>$$
+E(N) = \lambda * E(T) \\
+E(T) = \frac{1}{\mu - \lambda}
+$$</p>
+<p>Y si pongo n servidores? A mayor cantidad de servidores mejora el tiempo de
+respuesta (lo cual era razonable desde un principio). Sin embargo siempre tenés
+una carga suficiente como para saturarte el sistema:</p>
+<p><img src="./img/mmn_queue.png#center" alt="" /></p>
+<h2 id="fundamentos"><a class="header" href="#fundamentos">Fundamentos</a></h2>
+<p>Distintas definiciones de congestión:</p>
+<ul>
+<li>
+<p>Tanembaum:</p>
+<blockquote>
+<p>Too many packets present in (a part of) the network causes packet delay
+and loss that degrades performance. This situation is called congestion</p>
+</blockquote>
+</li>
+<li>
+<p>Peterson (habría que especificar a qué nos referimos con QoS, en gral. se
+firman SLAs):</p>
+<blockquote>
+<p>Demasiadas fuentes usando una red compartida, enviando demasiados datos
+demasiado rápido como para ofrecer una buena calidad de servicio.</p>
+</blockquote>
+</li>
+<li>
+<p>Síntomas típicos:</p>
+<ul>
+<li>pérdida de paquetes</li>
+<li>retardo creciente</li>
+</ul>
+</li>
+</ul>
+<div id="admonition-warning" class="admonition admonish-warning">
+<div class="admonition-title">
+<p>Warning</p>
+<p><a class="admonition-anchor-link" href="unidad_7.html#admonition-warning"></a></p>
+</div>
+<div>
+<p>Control de congestion y control de flujo <strong>son dos problemas muy diferentes</strong></p>
+<p>TCP define una ventana efectiva que es un resultado de ponderar la ventana de
+control de flujo (el aviso de ventana) y el control de congestion.</p>
+<ul>
+<li>Control de flujo maneja una comunicación punto a punto</li>
+<li>Control de congestión es algo que modifica toda una subred</li>
+</ul>
+</div>
+</div>
+<ul>
+<li>Asumimos algunas cosas
+<ul>
+<li>Las colas son de tipo FIFO</li>
+<li>Se descartan paquetes cuando se llena la capacidad como política de
+manejo de buffers</li>
+<li>simplificación: Si no llega ACK de TCP entonces hay congestión
+<ul>
+<li>Los libros hablan de que hay otras métricas (ej: % de paquetes
+descartados, average packet delay) pero en la práctica no se tienen
+en cuenta</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="políticas-que-influyen-en-la-congestión-por-capa"><a class="header" href="#políticas-que-influyen-en-la-congestión-por-capa">Políticas que influyen en la congestión por capa</a></h3>
+<p>Notar que no sólo capa 4 influye si no que las anteriores también.</p>
+<div class="table-wrapper"><table><thead><tr><th>Capa</th><th>Políticas</th></tr></thead><tbody>
+<tr><td>Transporte</td><td>Política de retransmisión</td></tr>
+<tr><td></td><td>Política de almacenamiento en caché de paquetes fuera de orden</td></tr>
+<tr><td></td><td>Política de ACKs</td></tr>
+<tr><td></td><td>Política de control de flujo</td></tr>
+<tr><td></td><td>Determinación de terminaciones de temporizador</td></tr>
+<tr><td>Red</td><td>Circuitos virtuales vs. datagramas en la subred</td></tr>
+<tr><td></td><td>Política de encolamiento y servicio de paquetes</td></tr>
+<tr><td></td><td>Política de descarte de paquetes</td></tr>
+<tr><td></td><td>Algoritmo de enrutamiento</td></tr>
+<tr><td></td><td>Administración de tiempo de vida del paquete</td></tr>
+<tr><td>Enlace</td><td>Política de retransmisiones</td></tr>
+<tr><td></td><td>Política de almacenamiento en caché de paquetes fuera de orden</td></tr>
+<tr><td></td><td>Política de ACKs</td></tr>
+<tr><td></td><td>Política de control de flujo</td></tr>
+</tbody></table>
+</div>
+<h2 id="control-de-congestión"><a class="header" href="#control-de-congestión">Control de Congestión</a></h2>
+<p>Consideramos como control de congestión a todo lo que hacen los nodos de la red
+para prevenir o responder a sobrecargas de la red.</p>
+<p>Mediante 3 métodologías:</p>
+<ul>
+<li>Pre-asignando recursos (a.k.a subutilizo)
+<ul>
+<li>ej: designo buffer específico para gaming, buffer especídixo para streaming, etc.</li>
+</ul>
+</li>
+<li>Libero recursos</li>
+<li>Controlo congestión sólo si ocurre (y cuando ocurre)
+<ul>
+<li>Tengo que decidir a quién "perjudicar"</li>
+<li>Objetivo: permitir uso de recursos de forma "equitativa" (cuando hay congestión, todos se joden y fue)</li>
+</ul>
+</li>
+</ul>
+<h2 id="criterios-de-evaluación"><a class="header" href="#criterios-de-evaluación">Criterios de Evaluación</a></h2>
+<ul>
+<li>La idea es que la red sea usada de forma <strong>eficiente</strong> pero también <strong>equitativa</strong></li>
+<li>Un buen indicador para la eficiencia: <code>potencia = throughput / delay</code></li>
+<li>Indicador de equidad de Jain: dados \(n\) flujos por un enlace con throughputs \((x_1, x_2, \dots, x_n)\):</li>
+</ul>
+<p>$$
+\frac{1}{n} \leq f \leq 1 \\
+f(x_1, \dots, x_n) = \frac{(\sum_{i = 1}^n{x_i})^2}{n * \sum_{i = 1}^n{x_i^2}}
+$$</p>
+<ul>
+<li>\(f = 1\) es cuando hay equidad máxima</li>
+</ul>
+<h2 id="teoría-de-control"><a class="header" href="#teoría-de-control">Teoría de control</a></h2>
+<p>Un <strong>sistema de lazo cerrado</strong> es un sistema donde tomo una muestra de una
+variable y en base a eso hago una acción.</p>
+<ul>
+<li>Ej: el aire acondicionado mide temperatura y en base a eso sigue o se apaga</li>
+<li>En TCP el timeout de retransmisión lo calculábamos en base al RTT estimado,
+que lo vemos como un sistema de lazo cerrado.</li>
+</ul>
+<p>Dentro de los sistemas de lazo cerrado, los podemos clasificar según el tipo de
+retroalimentación:</p>
+<ul>
+<li><strong>retroalimentación implícita</strong>: que es lo que ocurre en TCP
+<ul>
+<li>la fuente infiere la congestión basado en Time-Outs, ACK duplicados</li>
+</ul>
+</li>
+<li><strong>retroalimentación explícita</strong>: que es lo que ocurre en ICMP
+<ul>
+<li>packet marking</li>
+<li>problema: necesito cooperación explícita entre fuentes y componentes de
+red (switches). También debería cambiar los algoritmos de la fuente y los
+nodos.</li>
+<li>Hoy está volviendo a resurgir la idea de revivir los bits de CE
+(Congestion Experienced) y ECN (ECN Capable Transport)</li>
+</ul>
+</li>
+</ul>
+<h2 id="red-random-early-detection"><a class="header" href="#red-random-early-detection">RED (Random Early Detection)</a></h2>
+<ul>
+<li>
+<p>Propuesto por Jacobson</p>
+</li>
+<li>
+<p>Método implícito de Congestion Avoidance</p>
+</li>
+<li>
+<p>La idea es hacer una administración activa de la cola</p>
+<ul>
+<li>Está pensado para trabajar en colaboración com mecanismos de control de
+congestión de la capa de transporte (en nuestro caso TCP)</li>
+<li>En lugar de esperar a que se llene el buffer, cada tanto descarta un
+paquete con cierta probabilidad, una vez superado un threshold de carga</li>
+</ul>
+<p><img src="./img/red.png#center" alt="" /></p>
+</li>
+<li>
+<p>Algoritmo:</p>
+<ul>
+<li>Calculo largo promedio de la cola: <code>AvgLen = (1 - Weight) * AvgLen + Weight * sampleLen</code></li>
+<li><code>Weight</code> es un escalar entre 0 y 1</li>
+<li><code>SampleLen</code> es el tamaño de la cola, que se actualiza con cada paquete
+que entra/sale</li>
+<li>De alguna forma, <code>AvgLen</code> es una versión suavizada de <code>SampleLen</code>. Se
+puede observar con el gráfico: <img src="./img/red_avg.png" alt="" /></li>
+<li>Cuando llega un paquete evalúo el <code>AvgLen</code> y:
+<ul>
+<li>Si estoy por debajo de <code>MinThreshHold</code>, encolo siempre</li>
+<li>Si estoy entre <code>MinThreshHold</code> y <code>MaxThreshHold</code>, descarto con una
+probabilidad <code>p</code></li>
+<li>Si estoy por arriba del <code>MaxThreshHold</code>, descarto siempre</li>
+<li>esa probabilidad <code>p</code> se calcula como:
+<ul>
+<li><code>TempP = MaxP * (AvgLen - MinThreshHold) / (MaxThreshHold - MinThreshHold)</code></li>
+<li><code>P = TempP / (1 - count * TempP)</code> con <code>count</code> el número de paquetes encolados</li>
+</ul>
+</li>
+<li>si graficamos la probabilidad de droppear en función del valor de <code>AvgLen</code>:
+<img src="./img/red_probability.png#center" alt="" /></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="impacto-del-cc-en-tcp"><a class="header" href="#impacto-del-cc-en-tcp">Impacto del CC en TCP</a></h2>
+<ul>
+<li>Vimos que RED está pensado para trabajar con el protocolo de transporte (en
+este caso TCP).</li>
+<li>Idea: defino una ventana de congestión
+<ul>
+<li>cuando pierdo un paquete, achico la ventana de congestión</li>
+<li>genero una ventana efectiva de transmisión combinando la ventana de
+congestión y el advertisedWindow. Entonces al achicar la ventana de
+congestión, achico la ventana de transmisión (a costo de la Vtx).
+<blockquote>
+<p>Recuerdo: <code>Throughput = SWS * |frame| / RTT</code></p>
+</blockquote>
+</li>
+<li>Regulo la ventana de congestión: la seteo en 1 y va creciendo de forma exponencial (slow start)</li>
+</ul>
+</li>
+</ul>
+<h3 id="slow-start"><a class="header" href="#slow-start">Slow Start</a></h3>
+<p>Por cada RTT hago:</p>
+<ul>
+<li>Si recibo un ACK: <code>W &lt;- (W+1)/ W</code>.</li>
+<li>Si se pierde un ACK: <code>W &lt;- W / 2</code></li>
+</ul>
+<p><img src="./img/slow_start_window.png#center" alt="" /></p>
+<h4 id="performance-de-tcp"><a class="header" href="#performance-de-tcp">Performance de TCP</a></h4>
+<ul>
+<li>Asumo que tengo un flujo TCP</li>
+<li>Tengo RTT constante</li>
+<li>Tengo prob p de pérdida de paquetes</li>
+<li>Tengo un ancho de banda relativamente grande (lo que nos importa es que es lo
+suficientemente grande como para llenar el buffer)</li>
+<li>La señal de congestión es periódica</li>
+</ul>
+<p>Me pregunto: cuál es el throughput de la conexión TCP</p>
+<ul>
+<li>Cuántos paquetes por ciclo?</li>
+<li>Cuál es la duración de un ciclo?</li>
+</ul>
+<p>Fórmula final:</p>
+<p>$$
+BW = \frac{MSS * C}{RTT * \sqrt{p}} \\
+C = \sqrt{\frac{3}{2}}
+$$</p>
+<p><img src="./img/formula_throughput_tcp.png" alt="" /></p>
+<ul>
+<li>la escala es doble logarítmica</li>
+<li>\(MSS\) es el tamaño máximo de segmento (puede estár acotado por el MTU del
+enlace de salida desde el host), no incluye los headers de TCP e IP.</li>
+<li>conclusión: TCP está limitado por el RTT</li>
+</ul>
+<h2 id="moralejas"><a class="header" href="#moralejas">Moralejas</a></h2>
+<ul>
+<li>La congestión es un fenómeno que siempre aparece.</li>
+<li>TCP implementa control de congestión e2e.</li>
+<li>lo vemos como un sistema de control de lazo cerrado con retroalimentación
+implícita.</li>
+<li>control de congestión en TCP: defino ventana de congestión que junto con el
+aviso de ventana defino una ventana de transmisión. Esa ventana al perder un
+paquete decremento y al recibir un ACK incremento.</li>
+<li>el control de congestión hace que el throughput sea constantemente variable.</li>
+<li>Qué hace por ejemplo Netflix cuando hay congestión y baja el throughput?
+<ul>
+<li>baja la calidad de la imagen (<a href="https://en.wikipedia.org/wiki/Dynamic_Adaptive_Streaming_over_HTTP">Dash</a>)</li>
+<li>usa CDNs para bajar el RTT y aumentar el throughput</li>
+</ul>
+</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="unidad-8---nivel-de-aplicación"><a class="header" href="#unidad-8---nivel-de-aplicación">Unidad 8 - Nivel de Aplicación</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="unidad-9---seguridad"><a class="header" href="#unidad-9---seguridad">Unidad 9 - Seguridad</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="bibliografía"><a class="header" href="#bibliografía">Bibliografía</a></h1>
@@ -2440,6 +2771,10 @@ destacable para ese protocolo.</li>
 <p>Libro complementario que no vimos en la materia pero me pareció didáctico:</p>
 <ul>
 <li><a href="https://catnip.article19.org/">How The internet really works - An Illustrated Guide to protocols, privacy, censorship, and governance</a></li>
+</ul>
+<h2 id="miscelaneous-1"><a class="header" href="#miscelaneous-1">Miscelaneous</a></h2>
+<ul>
+<li><a href="https://fermatslibrary.com/s/why-the-internet-only-just-works">why the internet only just works - Fermat's Library</a></li>
 </ul>
 
                     </main>
