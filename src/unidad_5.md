@@ -332,7 +332,7 @@ corren como una aplicación más.
 | Database description   | Anuncia qué actualizaciones tiene el emisor   |
 | Link state request   | Solicita información del socio   |
 
-```admonish warn title="PREGUNTA DE FINAL ALERT"
+```admonish warning title="PREGUNTA DE FINAL ALERT"
 
 Por qué decimos que OSPF realiza una inundación **confiable**?
 

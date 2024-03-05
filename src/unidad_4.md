@@ -110,7 +110,7 @@ mejor. Por qué entonces ganó datagramas.
   virtuales resolvía mediante infra, pero con software (esa solución es la que
   conocemos como TCP).
 
-```admonish warn title="Conmutación de circuitos vs. Conmutación de paquetes"
+```admonish warning title="Conmutación de circuitos vs. Conmutación de paquetes"
 
 Algo en lo que se hizo mucho incapié es en el hecho de que podemos llegar a
 confundir circuitos virtuales con conmutación de circuitos, y que por ende
