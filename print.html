@@ -2762,6 +2762,307 @@ paquete decremento y al recibir un ACK incremento.</li>
 </li>
 </ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="unidad-8---nivel-de-aplicación"><a class="header" href="#unidad-8---nivel-de-aplicación">Unidad 8 - Nivel de Aplicación</a></h1>
+<p>Estimación (inchequeable): alrededor del 80% de los protocolos de la capa de
+aplicación están basados en el esquema cliente-servidor.</p>
+<p>Acá vamos a hablar de DNS, SMTP, POP3, IMAP, HTTP. Pero en orden cronológico sería:</p>
+<ol>
+<li>SMTP</li>
+<li>DNS</li>
+<li>HTTP (acá más o menos estarían POP3 e IMAP)</li>
+</ol>
+<ul>
+<li><strong>Visión</strong>: en general tenemos una parte de comunicación + procesos
+distribuidos.</li>
+<li>Los protocolos de la capa de aplicación definen los mensajes que se
+intercambian los las apps.
+<ul>
+<li>Uso de acciones ejecutadas por procesos en los hosts</li>
+<li>Uso de servicios de comunicación</li>
+<li>Usan el servicio de capas inferiores (en particular para transporte TCP y
+UDP)</li>
+</ul>
+</li>
+<li>Ojo: 2 procesos en un mismo host usan IPC (Inter Process), mientras que 2
+procesos en distintos hosts usan protocolos de la capa de aplicación.</li>
+</ul>
+<h3 id="características-de-los-protocolos-de-la-capa-de-aplicación"><a class="header" href="#características-de-los-protocolos-de-la-capa-de-aplicación">Características de los protocolos de la capa de aplicación</a></h3>
+<ul>
+<li>En gral. son mensajes de petición y respuesta que se intercambian</li>
+<li>Por lo general definidos en los RFC (Request For Comment)</li>
+<li>Estructura de Cliente Servidor, el cliente inicia la comunicación y asume que
+hay toda una infraestructura que lleva lo que envía a través de su socket
+hasta la salida del socket del servidor.</li>
+<li>Se impulsa normalizar APIs de comunicación
+<ul>
+<li>facilita intercambiar una implementación por otra</li>
+<li>reduce costos</li>
+</ul>
+</li>
+</ul>
+<h3 id="servicios-de-los-protocolos-de-transporte-repaso"><a class="header" href="#servicios-de-los-protocolos-de-transporte-repaso">Servicios de los protocolos de transporte (Repaso)</a></h3>
+<p>TCP:</p>
+<ul>
+<li>orientado a conexión</li>
+<li>transporte fiable</li>
+<li>control de flujo</li>
+<li>control de congestión</li>
+<li>No proporciona: temporización</li>
+</ul>
+<p>UDP:</p>
+<ul>
+<li>sin conexión</li>
+<li>fin de la lista(?)</li>
+</ul>
+<h3 id="criterio-para-elegir-el-servicio-de-transporte"><a class="header" href="#criterio-para-elegir-el-servicio-de-transporte">Criterio para elegir el servicio de transporte</a></h3>
+<ul>
+<li>Pérdida de datos
+<ul>
+<li>algunas aplicaciones toleran pérdidas (ej: llamada de audio).</li>
+<li>oOtras como la transferencia de archivos requieren transferencia
+confiable&gt;</li>
+</ul>
+</li>
+<li>Temporización
+<ul>
+<li>Algunas aplicaciones (como Telefonía en internet o juegos) requieren un
+delay artificial para eliminar el jitter.</li>
+</ul>
+</li>
+<li>Ancho de banda
+<ul>
+<li>Algunas aplicaciones requieren un ancho de banda mínimo (ej: streaming de video)</li>
+<li>Mientras que otras hacen uso del ancho de banda que tengan disponible (ej: cliente de email)</li>
+</ul>
+</li>
+</ul>
+<h3 id="algunas-aplicaciones-de-internet"><a class="header" href="#algunas-aplicaciones-de-internet">Algunas aplicaciones de internet</a></h3>
+<div class="table-wrapper"><table><thead><tr><th>Aplicación</th><th>Protocolo de capa de aplicación</th><th>Protocolo de transporte subyacente</th></tr></thead><tbody>
+<tr><td>Correo electrónico</td><td>SMTP (RFC 2821)</td><td>TCP</td></tr>
+<tr><td>Acceso a terminales remotos</td><td>Telnet (RFC 854)</td><td>TCP</td></tr>
+<tr><td>Web</td><td>HTTP (RFC 2616)</td><td>TCP</td></tr>
+<tr><td>Transferencia de archivos</td><td>FTP (RFC 959)</td><td>TCP</td></tr>
+<tr><td>Streaming multimedia</td><td>HTTP (Youtube, Netflix)</td><td>TCP o UDP</td></tr>
+<tr><td>Telefonía internet</td><td>SIP (RFC 3261), RTP (RFC 3550)</td><td>UDP en gral, a veces TCP</td></tr>
+</tbody></table>
+</div>
+<h2 id="dns-domain-name-system"><a class="header" href="#dns-domain-name-system">DNS (Domain Name System)</a></h2>
+<ul>
+<li>aplicación que organiza máquinas dentro de dominios</li>
+<li>permite resolver un nombre de dominio en una dirección ip</li>
+<li>sistema distribuido escalable</li>
+<li>antes vos tenías un archivo de texto que tenía <code>&lt;nombre_del_dominio&gt; &lt;dirección IP&gt;</code>.
+<ul>
+<li>De hecho sigue existiendo, es el de <code>/etc/hosts</code></li>
+<li>Esto obviamente a la larga deja de escalar porque tengo miles y miles de
+hosts</li>
+</ul>
+</li>
+<li>definido en RFCs 1034/1035</li>
+<li>Tengo un <em>resolver</em> (que corre dentro del host) que recibe como parámetro el
+nombre del host a buscar.
+<ul>
+<li>El <em>resolver</em> envía un paquete UDP a un servidor DNS local, que busca el
+nombre y devuelve la dirección de IP al resolver y eventualmente se lo
+devuelve al solicitante.</li>
+<li>Hay un admin que maneja el servidor de DNS</li>
+</ul>
+</li>
+<li>El namespace está <strong>organizado</strong> en dominios de nivel superior
+<ul>
+<li>por país (jp, us, nl)</li>
+<li>genéricos (com, gov, org)</li>
+<li>En argentina tenés NIC.ar que administra todos los subdominios que están
+bajo el dominio ar
+<ul>
+<li>a los servidores de DNS que sirven estos nombres de dominio los
+llamamos <strong>autoritativos</strong></li>
+<li>de .ar cuelga .uba <img src="./img/dns_namespace.png" alt="" /></li>
+</ul>
+</li>
+<li>normalmente los DNS se dividen en zonas (que no se solapan)
+<ul>
+<li>cada zona tiene un nameserver primario
+<ul>
+<li>y algunos servidores secundarios que traen la data del primario,
+con motivos de redundancia y distribución de carga.</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="formato-del-archivo-dns"><a class="header" href="#formato-del-archivo-dns">Formato del archivo DNS</a></h3>
+<ul>
+<li>Tengo una dupla <code>(Nombre, TTL, Clase, Tipo, Valor)</code></li>
+<li>El registro de tipo SOA indica el nombre de la fuente de info primaria de la
+zona de cobertura del servidor.</li>
+</ul>
+<div class="table-wrapper"><table><thead><tr><th>Tipo</th><th>Significado</th><th>Valor</th></tr></thead><tbody>
+<tr><td>SOA</td><td>Inicio de autoridad</td><td>Parámetros de la zona</td></tr>
+<tr><td>A</td><td>Dirección IP de un host</td><td>Entero de 32 bits</td></tr>
+<tr><td>MX</td><td>Intercambio de correo</td><td>Prioridad, dominio dispuesto a aceptar correo electrónico</td></tr>
+<tr><td>NS</td><td>Servidor de nombres (Name Server)</td><td>Nombre de un servidor para este dominio</td></tr>
+<tr><td>CNAME</td><td>Nombre canónico</td><td>Nombre de dominio</td></tr>
+<tr><td>PTR</td><td>puntero</td><td>Alias de una dirección IP</td></tr>
+<tr><td>HINFO</td><td>Descripción del host</td><td>CPU y SO en ASCII</td></tr>
+<tr><td>TXT</td><td>Texto</td><td>Texto ASCII no interpretado</td></tr>
+</tbody></table>
+</div>
+<h3 id="tipos-de-consulta"><a class="header" href="#tipos-de-consulta">Tipos de consulta</a></h3>
+<p>El cliente hace una única consulta <strong>recursiva</strong> al Name Server local, el cual
+si no conoce la respuesta hará una o múltiples consultas iterativas a los
+distintos name servers. Notar cómo se procesa "de derecha a izquierda" cada uno
+de los dominios + subdominios:</p>
+<p><img src="./img/dns_example.png" alt="" /></p>
+<p>Algo muy usual para los servidores locales guardan cachean las respuestas.</p>
+<p>Otro detalle es que separamos las respuestas <strong>autoritativas</strong> de las <strong>no
+autoritativas</strong>. Las primeras son aquellas generadas por los servidores
+responsables de la zona, que mantienen ciertas garantías de confiabilidad sobre
+la respuesta.</p>
+<h2 id="correo-electrónico"><a class="header" href="#correo-electrónico">Correo electrónico</a></h2>
+<p>Tengo 2 componentes principales:</p>
+<ul>
+<li>Los Agentes de usuario (User Agent): el lector de correo, que interactúa con
+su servidor correspondiente para el envío y recepción de mails. Se conecta
+con los servidores por medio de <strong>POP3</strong> (Post Office Protocol) o <strong>IMAP</strong></li>
+<li>Los servidores de correo: tienen
+<ul>
+<li>un buzón de correo para almacenar los mensajes</li>
+<li>una cola de mensajes para la salida de los mensajes</li>
+<li>el protocolo SMTP se usa entre servidores de correo para intercambiar los
+mensajes de correo electrónico</li>
+</ul>
+</li>
+</ul>
+<p><img src="./img/smtp.png#center" alt="" /></p>
+<h3 id="smtp"><a class="header" href="#smtp">SMTP</a></h3>
+<ul>
+<li>
+<p>Está montado sobre TCP</p>
+</li>
+<li>
+<p>Usa DNS para resolver nombres de dominios de los emails</p>
+</li>
+<li>
+<p>Interacción basada en "pregunta (comandos) y respuesta (código de respuesta)"
+<img src="./img/smtp_example.png#center" alt="" /></p>
+</li>
+<li>
+<p>Hereda en parte el formato de texto del mensaje del RFC 822 en el que se
+define:</p>
+<ul>
+<li>Header
+<ul>
+<li>Para</li>
+<li>De</li>
+<li>Asunto</li>
+<li>Cc</li>
+<li>Bcc</li>
+<li>Received</li>
+<li>Return-Path (puede usarse para identificar una ruta de regreso al
+remitente)</li>
+<li>Date</li>
+<li>Reply-To: Dirección de correo a la que deben enviarse las
+contestaciones</li>
+<li>Message-ID</li>
+<li>In-Reply-To: Id del mensaje que se responde</li>
+<li>References</li>
+<li>Keywords</li>
+<li>Subject</li>
+</ul>
+</li>
+<li>Body
+<ul>
+<li>el "mensaje" en caracteres ascii</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3 id="mime-o-cómo-agregar-gifs-de-gatitos-al-mail"><a class="header" href="#mime-o-cómo-agregar-gifs-de-gatitos-al-mail">MIME, o cómo agregar gifs de gatitos al mail</a></h3>
+<ul>
+<li>Objetivo: Quiero transmitir texto no plano (archivos binarios) por SMTP</li>
+<li>MIME: Extensiones de correo multimedia</li>
+<li>RFC 2045, 2056</li>
+<li>Antes de esto, si querían mandar fotos por mail tenían que encodearlas a base
+64 y ahí mandarlo como ascii, y después desencodear.
+<ul>
+<li>MIME automatiza este proceso agregando un par de lineas al header
+<img src="./img/mime.png" alt="" /></li>
+</ul>
+</li>
+</ul>
+<p>Formato:</p>
+<p>Header
+- MIME-Version
+- Content-Description
+- Content-Id
+- Content-Transfer-Encoding: cómo se encodeó el mensaje para transmitir
+- Content-Type: naturaleza del mensaje (ej: <code>Content-Type: video/mpeg</code>, el
+tipo y subtipo se separa con una barra)</p>
+<p>Hoy en día hay muchos <code>Content-Type</code>:</p>
+<p><img src="./img/mime_content_type.png" alt="" /></p>
+<h3 id="pop3-vs-imap"><a class="header" href="#pop3-vs-imap">POP3 vs. IMAP</a></h3>
+<p>TLDR:</p>
+<ul>
+<li>POP3 almacena en la pc del usuario mientras que imap en el servidor (puedo leer offline, pero necesito mejor equipo y además no necesito mucho tiempo de conexión ya que tengo todo descargado de antemano)</li>
+<li>POP3 usa el puerto TCP 110 mientras que IMAP el 143</li>
+<li>POP3 está definido en el RFC 1939 e IMAP en el RFC 2060</li>
+<li>hoy en día es más común IMAP</li>
+</ul>
+<p><img src="./img/pop3_vs_imap.png" alt="" /></p>
+<h2 id="http"><a class="header" href="#http">HTTP</a></h2>
+<ul>
+<li>Una página web tiene objetos (un archivo HTML,  una imagen JPEG, un archivo de audio, etc.)</li>
+<li>Además una página web tiene un archivo HTML base que incluye objetos referenciados</li>
+<li>Cada objeto es addresseable por una URL compuesta por el nombre del host + nombre de la ruta al objeto</li>
+<li><strong>El protocolo HTTP es lo que permite solicitar, recibir y descargar esos objetos</strong>
+<ul>
+<li>De vuelta se repite el esquema Cliente-Servidor</li>
+</ul>
+</li>
+<li>Es stateless</li>
+<li>Es "agnóstico" al OS o al navegador</li>
+<li>HTTP 1.0 definido en RFC 1945</li>
+<li>HTTP 1.1 definido en RFC 2068</li>
+</ul>
+<p>Por abajo usa TCP:</p>
+<ul>
+<li>El cliente inicia la conexión en el puerto 80</li>
+<li>El servidor acepta la conexión</li>
+<li>Se intercambian mensajes HTTP entre el cliente y el servidor</li>
+<li>Se cierra la conexión</li>
+</ul>
+<h3 id="formato-general"><a class="header" href="#formato-general">Formato General</a></h3>
+<ul>
+<li>El body va encodeado usando algo similar a MIME</li>
+<li>En HTTP 1.0 tenía GET, POST, HEAD</li>
+<li>En HTTP 1.1 tenía GET, POST, HEAD y también PUT y DELETE</li>
+<li>La respuesta incluye un status code (200 OK, 404 NOT FOUND, etc.)</li>
+</ul>
+<p><img src="./img/http_format.png" alt="" /></p>
+<h3 id="modelando-el-tiempo-de-respuesta"><a class="header" href="#modelando-el-tiempo-de-respuesta">Modelando el tiempo de respuesta</a></h3>
+<p>Tengo 2 veces el RTT (para iniciar conexión y pedir el archivo) sumado al
+tiempo de transmisión del archivo.</p>
+<p><img src="./img/http_response_times.png" alt="" /></p>
+<ul>
+<li>En la primer versión de HTTP las conexiones eran <strong>no persistentes</strong>. O sea
+que cada objeto abría una conexión HTTP (tengo el overhead de cada conexión
+TCP).</li>
+<li>En HTTP 1.1 se incluyó la conexión persistente en la que se arma una única
+conexión y ahí se piden todos los objetos.</li>
+</ul>
+<h2 id="cdn-o-bajemos-el-rtt-con-plata"><a class="header" href="#cdn-o-bajemos-el-rtt-con-plata">CDN, o "bajemos el RTT con plata"</a></h2>
+<ul>
+<li>La idea es tener un sistema de redirecciones</li>
+<li>Para redirigir una conexión al servidor geográficamente conveniente</li>
+<li>Le "dan los servidores" al ISP para sumar a su bbackbone</li>
+<li>Algunos: Akamai, Google (para evitar pagar fees de akamai), Amazon(arma AWS),
+Netflix(le "pide ayuda" a Amazon y crea OpenConnect, gran parte hosteado en
+AWS)</li>
+<li>Como la mayoría es "estático", replican en todos lados el contenido</li>
+</ul>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="unidad-9---seguridad"><a class="header" href="#unidad-9---seguridad">Unidad 9 - Seguridad</a></h1>
 <div style="break-before: page; page-break-before: always;"></div><h1 id="bibliografía"><a class="header" href="#bibliografía">Bibliografía</a></h1>
 <p>Libro de Cabecera de la materia:</p>
